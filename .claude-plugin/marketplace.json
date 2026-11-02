@@ -1,0 +1,21 @@
+{
+  "name": "claude-personal-skills",
+  "owner": {
+    "name": "Marcello Barylli"
+  },
+  "metadata": {
+    "description": "Personal Claude Code skills (codex-critique, round-log) synced across machines.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "personal-skills",
+      "description": "codex-critique and round-log skills.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Marcello Barylli"
+      },
+      "source": "./plugins/personal-skills"
+    }
+  ]
+}
