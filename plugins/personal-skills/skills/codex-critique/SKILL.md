@@ -34,13 +34,21 @@ Pressure-test a proposal with Codex before any code is written. Review-only: not
 
    Never include my own conclusion or recommendation in the prompt; it anchors Codex. State the goal and the proposal, not a verdict.
 
-3. **Log a `critique-returned` event with `round-log` before anything else**: it saves the critique verbatim to the trail. Then **return Codex's critique faithfully**, unedited in a `<details>` block, then a numbered table: `# | type | finding | +/−/0 | my recommendation (one line why)`. Recommend by type:
+3. **Log a `critique-returned` event with `round-log` before anything else**: it saves the critique verbatim to the trail. Then **present the critique and your recommendations as one numbered list**, so the user reads each finding and your verdict together without scrolling. Do not also print the full critique in a `<details>` block or repeat the findings in a separate table. For each finding:
+
+   ```markdown
+   N. **Type · Severity: Codex's headline** (+/−/0)
+      **Evidence:** … **Failure:** … **Smallest fix:** …   ← Codex's words, unedited
+      → **Recommend: Accept / Defer / Reject.** One line why (a narrower fix, if you have one).
+   ```
+
+   Keep Codex's text faithful: don't summarize, merge or reword findings. You may shorten local file links to `file:line`. Put anything outside the findings (Codex's overall verdict, its "Optional" list) after the list, with a recommendation on each. End with one line pointing to the verbatim copy in the trail. Recommend by type:
    - **Error:** accept. If Codex's fix is +, look for a narrower fix first.
    - **Gap:** accept only if the goal needs it; otherwise defer.
    - **Cut:** accept if the goal is still met.
    - **Optional:** defer by default, one line under Deferred.
 
-4. **Do not implement** until the user has seen both and decided. Log their decisions as a `disposition` event with `round-log`: every finding keeps its row in the Second opinion table, rejected and deferred ones included.
+4. **Do not implement** until the user has seen the list and decided. Log their decisions as a `disposition` event with `round-log`: every finding keeps its row in the Second opinion table, rejected and deferred ones included.
 
 ## Plan mode
 
@@ -48,7 +56,7 @@ Mandatory once a plan is drafted, before calling ExitPlanMode.
 
 1. Use the plan file as the proposal; don't write a separate one. Make sure it states the goal.
 2. Run step 2 as above.
-3. Show Codex's critique and the table as in step 3.
+3. Show the combined findings and recommendations list as in step 3.
 4. Stop and wait for the user to accept or reject each finding. Do not revise the plan or call ExitPlanMode before they reply.
 5. Log the decisions as in step 4 (in plan mode `round-log` writes to the plan file's buffer). Revise the plan file with the accepted findings only, state the net change in one line (e.g. "+1 check, −2 steps"), then call ExitPlanMode with the revised plan.
 
