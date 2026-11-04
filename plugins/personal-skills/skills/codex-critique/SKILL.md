@@ -14,10 +14,10 @@ Pressure-test a proposal with Codex before any code is written. Review-only: not
 2. **Delegate to Codex, read-only.** First, the goal gate: the proposal must state the goal and any clarified ambiguities. If an ambiguity that affects correctness or scope is still unresolved, ask the owner (AskUserQuestion) instead of dispatching; don't interview to fill empty fields. Then log a `critique-dispatched` event with the `round-log` skill: it saves the exact input Codex will read and its hash. Then run via Bash (add `run_in_background: true` for large proposals):
 
    ```bash
-   node "$(ls -d ~/.claude/plugins/cache/openai-codex/codex/*/ | sort -V | tail -1)scripts/codex-companion.mjs" task --effort high "<prompt>"
+   node "$(ls -d ~/.claude/plugins/cache/openai-codex/codex/*/ | sort -V | tail -1)scripts/codex-companion.mjs" task --effort high "<prompt>" < /dev/null
    ```
 
-   Always pass `--effort high` (use `xhigh` only if the user asks for maximum depth). Do NOT pass `--write`; `task` is read-only by default. Prompt template:
+   Always close stdin with `< /dev/null`: a Codex run that waits on stdin hangs silently (one sat idle for 34 minutes). Always pass `--effort high` (use `xhigh` only if the user asks for maximum depth). Do NOT pass `--write`; `task` is read-only by default. Prompt template:
 
    > Read-only: do not edit, create or delete any files. Critique the plan in `<path>` against the code in this repo. Its goal: `<goal>`. The owner values simplicity: the best plan is the smallest one that meets the goal correctly.
    >
@@ -69,4 +69,5 @@ Mandatory once a plan is drafted, before calling ExitPlanMode.
 - For a branch that already has code, prefer `/codex:adversarial-review --base <ref> <focus>` instead (user-invoked slash command).
 - If `codex-companion.mjs` is missing or Codex isn't logged in, tell the user to run `/codex:setup`.
 - Check progress of background runs with `status <job-id>` / `result <job-id>` on the same script.
+- A run with no progress after ~5 minutes is stuck: stop it with `cancel <job-id>` on the same script and re-dispatch with stdin closed. Never `pkill`; it can take down the agent's own shell (exit code 144). If you use `codex exec` directly instead of the companion, close stdin the same way.
 - If the user's CLAUDE.md says documents are Markdown, keep the proposal in Markdown; follow whatever output format rule applies.
