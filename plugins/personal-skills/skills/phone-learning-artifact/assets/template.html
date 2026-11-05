@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>REPLACE — artifact title</title>
+
+<!--
+===============================================================================
+  PROVENANCE — replace this block, don't delete it.
+
+  Derived artifact. Source of record: <the corpus, with versions/commit>.
+  Built <date>. This file asserts nothing the sources do not; where it differs
+  it is a PRESENTATION difference, never a claim difference.
+
+  SYNC RULE. Content lives in the DATA block below, separate from presentation,
+  so a re-sync is a data edit. This is not generated from the sources: the
+  artifact is a reorganisation, so a transform would fight the design.
+
+  SOURCE PRECEDENCE. <List the places a later document narrows an earlier one.
+  These are the regression tests — a faithful transcription of the broad
+  version silently reinstates a retracted claim.>
+
+  BUILT AGAINST SIX CRITERIA (see the skill's references/evidence.md; the
+  popular ones that FAILED meta-analysis are listed there too, so you don't
+  rebuild them):
+    1 No reading unit requires scrolling or panning. PASS/FAIL, measured with
+      scripts/fit-check.sh — never eyeballed.
+    2 Cut extraneous material.
+    3 Signal structure.
+    4 Diagrams ALONGSIDE prose, never instead of it.
+    5 A compact table can beat matched prose.
+    6 Remove time pressure; never frame it as preliminary. NO reading-time
+      estimate, NO completion bar, NO "quick summary" framing. Largest lever.
+
+  The position indicator shows position in an ARGUMENT (structural signalling,
+  criterion 3 — supported). It is NOT a completion or time-remaining cue, which
+  criterion 6 excludes. Keep that distinction if you edit it.
+
+  DO NOT ADD:
+    - Tap-to-reveal for anything load-bearing. Layering measured FASTER BUT
+      LESS ACCURATE (N=749) and was rated easier while being worse. Caveats
+      render WITH their claim; with every expander shut this must read as a
+      complete text.
+    - Prompts or questions. Pretesting is null for text; self-explanation's
+      comprehension cell does not clear zero; and no study has tested a prompt
+      that collects no answer, which is exactly the optional form.
+    - A "verified" marker. Certifying every claim needs evidence the corpus
+      does not contain; a false certification is worse than none.
+    - A service worker (unless you want a hosted copy to work offline — say
+      plainly that without one, only the local file is offline).
+===============================================================================
+-->
+
+<style>
+:root{
+  --bg:#fdfcfa; --surface:#fff; --text:#191817; --muted:#5c5956; --faint:#8a8681;
+  --rule:#e4e1db; --rule-strong:#cdc8c0; --focus:#1f4e73;
+  --k1:#3f5680; --k2:#2f6b52; --k3:#8a5330; --k4:#7a3350;   /* cluster hues */
+  --warn:#8a5e14; --ours:#5f5b74;                            /* the 2 annotations */
+  --sp:clamp(13px,3.6vw,15px);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#15171a; --surface:#1d2024; --text:#e9e7e3; --muted:#a8a39c; --faint:#817c75;
+    --rule:#2c3035; --rule-strong:#3d434a; --focus:#7fb5e0;
+    --k1:#8fa8d4; --k2:#79c3a2; --k3:#d99d72; --k4:#d890ad;
+    --warn:#d9a74e; --ours:#a9a3c4;
+  }
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overscroll-behavior-y:none}
+body{background:var(--bg);color:var(--text);display:flex;flex-direction:column;height:100dvh;
+  font:400 var(--sp)/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  -webkit-text-size-adjust:100%}
+h1,h2{margin:0;font-weight:600;line-height:1.25;letter-spacing:-.01em}
+p{margin:0}
+a{color:var(--focus);text-decoration:none;border-bottom:1px solid currentColor}
+
+/* ---- header + the always-visible anchor vocabulary ---- */
+header{flex:0 0 auto;background:var(--surface);position:relative;z-index:30;
+  border-bottom:1px solid var(--rule);padding:env(safe-area-inset-top) 0 0}
+.brand{padding:.5em .9em .4em;font-size:.78em;color:var(--muted)}
+.brand b{color:var(--text);font-size:1.15em}
+/* Every level stays readable at all times. Tapping ADDS detail; it never
+   reveals that the levels exist. An unlabelled expander is the pattern that
+   measured worse — the closed state must carry the proposition. */
+#anchorBtn{display:flex;width:100%;gap:0;border:0;border-top:1px solid var(--rule);
+  background:transparent;padding:0;cursor:pointer;font:inherit;text-align:left;
+  min-height:44px;align-items:stretch;
+  /* explicit: inheriting the UA's `buttontext` makes these vanish wherever the
+     palette and the browser's colour scheme desynchronise. */
+  color:var(--text)}
+#anchorBtn .lv{flex:1;padding:.42em .5em;border-right:1px solid var(--rule);
+  display:flex;flex-direction:column;justify-content:center}
+#anchorBtn .lv:last-of-type{border-right:0}
+#anchorBtn .k{font-weight:700;font-size:.82em}
+#anchorBtn .g{font-size:.72em;color:var(--muted);line-height:1.2}
+#anchorBtn .caret{flex:0 0 28px;display:flex;align-items:center;justify-content:center;
+  color:var(--faint);font-size:.7em;border-left:1px solid var(--rule)}
+/* OVERLAY, not push: pushing layout shrank every content screen by 160-430px
+   and failed the fit gate. The screen beneath must not reflow. */
+#anchorPanel{display:none;position:absolute;top:100%;left:0;right:0;background:var(--surface);
+  border-top:1px solid var(--rule);border-bottom:1px solid var(--rule-strong);
+  box-shadow:0 10px 24px -8px rgba(0,0,0,.3);padding:.7em .9em .85em;
+  max-height:78dvh;overflow-y:auto}
+#anchorPanel.open{display:block}
+#scrim{display:none;position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.18)}
+#scrim.open{display:block}
+table.anchor{width:100%;border-collapse:collapse;font-size:.78em}
+table.anchor th,table.anchor td{text-align:left;vertical-align:top;padding:.34em .4em;
+  border-bottom:1px solid var(--rule)}
+table.anchor th{color:var(--muted);font-weight:600}
+table.anchor td:first-child{font-weight:700;white-space:nowrap}
+.key{margin-top:.6em;padding:.5em .6em;border-left:3px solid var(--focus);font-size:.8em;
+  line-height:1.45;background:color-mix(in srgb,var(--focus) 7%,transparent)}
+
+/* ---- panels ---- */
+main{flex:1 1 auto;min-height:0;position:relative}
+.panel{display:none;height:100%;overflow:hidden}
+.panel.active{display:flex;flex-direction:column}
+.scroll{overflow-y:auto;-webkit-overflow-scrolling:touch;height:100%}
+.stage{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding:.7em .9em .2em}
+.pager{flex:0 0 auto;display:flex;gap:.5em;padding:.4em .9em calc(.5em + env(safe-area-inset-bottom));
+  border-top:1px solid var(--rule)}
+.pager button{flex:1;min-height:44px;border:1px solid var(--rule-strong);border-radius:6px;
+  background:var(--surface);color:var(--text);font:inherit;font-size:.86em;font-weight:600;cursor:pointer}
+.pager button:disabled{opacity:.33}
+.body-scroll{flex:1 1 auto;min-height:0;overflow-y:auto}
+
+/* ---- spine ---- */
+.glyph{flex:0 0 auto;display:flex;align-items:center;margin-bottom:.75em}
+.glyph .n{flex:0 0 auto;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--rule-strong);
+  background:var(--bg);display:flex;align-items:center;justify-content:center;
+  font-size:.62em;font-weight:700;color:var(--faint)}
+.glyph .n.done{border-color:var(--faint);color:var(--muted)}
+.glyph .n.here{border-color:var(--focus);background:var(--focus);color:var(--bg);transform:scale(1.14)}
+.glyph .seg{flex:1 1 auto;height:1.5px;background:var(--rule-strong)}
+.head{display:flex;align-items:center;gap:.5em;margin-bottom:.4em}
+.head .step{font-size:.72em;color:var(--faint);text-transform:uppercase;letter-spacing:.06em}
+.chip{font-size:.68em;font-weight:700;letter-spacing:.06em;padding:.2em .45em;
+  border-radius:3px;border:1px solid currentColor}
+.claim{font-size:1.24em;font-weight:600;line-height:1.3;margin-bottom:.5em}
+.claim em{font-style:normal;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:2px}
+.because{font-size:.95em;margin-bottom:.55em}
+/* criterion 4: the connecting prose stays. Do not compress it into the glyph. */
+.forces{font-size:.85em;color:var(--muted);padding-left:.7em;border-left:2px solid var(--rule-strong);
+  margin-bottom:.6em}
+.forces b{color:var(--text);font-weight:600}
+.caveat{font-size:.8em;line-height:1.45;padding:.45em .55em;margin-bottom:.5em;
+  border-left:3px solid var(--warn);background:color-mix(in srgb,var(--warn) 8%,transparent)}
+.caveat.ours{border-left-color:var(--ours);background:color-mix(in srgb,var(--ours) 9%,transparent)}
+.caveat .tag{font-weight:700;font-size:.9em}
+.srcline{font-size:.78em;color:var(--muted);line-height:1.5}
+.srcline b{display:block;font-size:.86em;color:var(--faint);text-transform:uppercase;
+  letter-spacing:.05em;margin-bottom:.15em}
+
+/* ---- clusters ---- */
+.ctabs{flex:0 0 auto;display:flex;gap:.35em;margin-bottom:.7em}
+.ctabs button{flex:1;min-height:44px;border:1px solid var(--rule-strong);border-radius:6px;
+  background:var(--surface);color:var(--muted);font:inherit;font-weight:700;cursor:pointer}
+.ctabs button[aria-selected="true"]{color:var(--bg);border-color:transparent}
+.cbody{flex:1 1 auto;min-height:0;overflow-y:auto;padding-bottom:.6em}
+.cbody h2{font-size:1.08em;margin-bottom:.3em}
+.cbody .lead{font-size:.85em;color:var(--muted);margin-bottom:.7em;line-height:1.45}
+.sub{border-top:1px solid var(--rule);padding:.55em 0}
+.sub.first{border-top:0;padding-top:0}
+.sub .code{font-weight:700;font-size:.8em;letter-spacing:.04em}
+.sub .t{font-weight:600;font-size:.92em;margin-bottom:.15em}
+.sub .d{font-size:.82em;color:var(--muted);line-height:1.45}
+
+/* ---- source cards: flat, and EXEMPT from the fit gate (no data-fit) ---- */
+.filterbar{flex:0 0 auto;display:flex;gap:.3em;padding:.6em .9em;border-bottom:1px solid var(--rule);
+  background:var(--surface)}
+.filterbar button{flex:1;min-height:44px;border:1px solid var(--rule-strong);border-radius:6px;
+  background:transparent;color:var(--muted);font:inherit;font-weight:700;font-size:.84em;cursor:pointer}
+.filterbar button[aria-pressed="true"]{background:var(--text);color:var(--bg);border-color:var(--text)}
+.count{padding:.5em .9em .2em;font-size:.76em;color:var(--faint)}
+.card{margin:.55em .9em;padding:.7em .75em;background:var(--surface);border:1px solid var(--rule);
+  border-left-width:3px;border-radius:5px}
+.card .nm{font-weight:700;font-size:1.02em;line-height:1.25}
+.card .meta{font-size:.76em;color:var(--faint);margin-bottom:.4em}
+.card .lv{font-size:.68em;font-weight:700;padding:.14em .38em;border-radius:3px;
+  background:var(--rule);color:var(--muted);white-space:nowrap;margin-left:.4em}
+.card .says{font-size:.84em;line-height:1.5;margin-bottom:.45em}
+/* The signature field. Never put this behind a tap, and never truncate it to
+   fit a screen — the nuance is the value. */
+.card .not{font-size:.81em;line-height:1.45;padding:.4em .5em;border-radius:4px;
+  border-left:2px solid var(--k4);background:color-mix(in srgb,var(--k4) 9%,transparent)}
+.card .not .tag{font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+  font-size:.86em;color:var(--k4)}
+.card .ann{font-size:.79em;line-height:1.45;margin-top:.4em;color:var(--muted)}
+.card .ann b{color:var(--warn)}
+.card .ann.o b{color:var(--ours)}
+.card .lk{display:inline-block;margin-top:.5em;font-size:.8em}
+
+/* ---- open questions ---- */
+.gapwrap{padding:.8em .9em calc(1em + env(safe-area-inset-bottom))}
+.gapwrap h2{font-size:1.1em;margin:1.1em 0 .25em}
+.gapwrap h2:first-of-type{margin-top:0}
+.gapwrap .intro{font-size:.85em;color:var(--muted);line-height:1.5;margin-bottom:.9em}
+.big{padding:.7em .75em;margin-bottom:.6em;background:var(--surface);border:1px solid var(--rule);
+  border-left:3px solid var(--focus);border-radius:5px}
+.big .q{font-weight:700;margin-bottom:.25em}
+.big .w{font-size:.83em;color:var(--muted);line-height:1.5}
+.item{border-top:1px solid var(--rule);padding:.55em 0;font-size:.84em;line-height:1.5}
+.item .mk{font-weight:700;color:var(--warn)}
+.item .mk.o{color:var(--ours)}
+
+/* ---- bottom nav ---- */
+nav{flex:0 0 auto;display:flex;background:var(--surface);border-top:1px solid var(--rule);
+  padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;min-height:52px;border:0;background:transparent;color:var(--faint);
+  font:inherit;font-size:.8em;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  border-top:2px solid transparent;margin-top:-1px}
+nav button[aria-selected="true"]{color:var(--text);border-top-color:var(--focus)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand"><b id="brandT">REPLACE — artifact title</b></div>
+  <!-- Omit this whole control if the corpus has no anchor vocabulary. Do not invent one. -->
+  <button id="anchorBtn" aria-expanded="false" aria-controls="anchorPanel"></button>
+  <div id="anchorPanel"></div>
+</header>
+<div id="scrim" aria-hidden="true"></div>
+
+<main>
+  <section class="panel active" id="p-spine" role="tabpanel">
+    <div class="stage">
+      <div class="glyph" id="glyph" aria-hidden="true"></div>
+      <div class="head"><span class="step" id="step"></span><span class="chip" id="chip"></span></div>
+      <div class="claim" id="claim"></div>
+      <div class="body-scroll" data-fit="spine">
+        <div class="because" id="because"></div>
+        <div class="forces" id="forces"></div>
+        <div id="cav"></div>
+        <div class="srcline" id="srcline"></div>
+      </div>
+    </div>
+    <div class="pager"><button id="sprev">← Back</button><button id="snext">Next →</button></div>
+  </section>
+
+  <section class="panel" id="p-clusters" role="tabpanel">
+    <div class="stage">
+      <div class="ctabs" id="ctabs" role="tablist"></div>
+      <div class="cbody" id="cbody" data-fit="cluster"></div>
+    </div>
+    <div class="pager"><button id="cprev">← Back</button><button id="cnext">Next →</button></div>
+  </section>
+
+  <section class="panel" id="p-sources" role="tabpanel">
+    <div class="filterbar" id="filterbar"></div>
+    <div class="scroll"><div class="count" id="count"></div><div id="list"></div></div>
+  </section>
+
+  <section class="panel" id="p-open" role="tabpanel">
+    <div class="scroll"><div class="gapwrap" id="gapwrap"></div></div>
+  </section>
+</main>
+
+<nav role="tablist" id="nav"></nav>
+
+<script>
+/* =========================================================================
+   DATA — replace everything in this block. The code below is presentation.
+
+   `not` is the signature field: what the source must NOT be cited for. Harvest
+   these from errata, critique tables, limitations sections, and anywhere the
+   corpus says "an earlier draft wrongly...". Expect them to be the artifact's
+   most durable value.
+
+   `lv` (grade/level) goes ONLY where the source speaks to a graded claim. A
+   methods survey or a standards document usually speaks to none, and forcing a
+   grade on it manufactures the category error the vocabulary exists to
+   prevent. Expect many cards to carry none.
+   ========================================================================= */
+const DATA = {
+  title: 'REPLACE — artifact title',
+  tabs: {spine:'argument', clusters:'fields', sources:'sources', open:'open'},
+
+  /* The small distinction the whole corpus hinges on. Set to null if none. */
+  anchor: {
+    levels: [
+      {k:'A', gloss:'direct evidence'},
+      {k:'B', gloss:'indirect / proxy'},
+      {k:'C', gloss:'inference only'}
+    ],
+    table: {
+      cols: ['Grade','Establishes','Certainty','Cost'],
+      rows: [
+        ['A','the outcome itself was measured','high','slow, expensive'],
+        ['B','a reproducible stand-in was measured','reproducible, but a PROXY','moderate'],
+        ['C','argued from theory; nothing measured','none','free']
+      ]
+    },
+    key: '<b>B is not a weak A.</b> A proxy can be perfectly reproducible and still tell you ' +
+         'nothing about the outcome: reproducibility is a property of the measurement, the ' +
+         'outcome is a property of the world. Collapsing the two is the error this corpus ' +
+         'makes most often — state the distinction the corpus actually hinges on here.'
+  },
+
+  /* Claims in dependency order. Count the real nodes; do not infer from headings. */
+  spine: [
+    {k:'1', claim:'The first claim, with its <em>load-bearing phrase</em> marked',
+     because:'What this claim rests on, in full prose. Keep the connecting sentences — the ' +
+             'evidence supports diagrams ALONGSIDE prose, never instead of it.',
+     forces:'Why this <b>creates the demand</b> for the next link. One sentence.',
+     src:'Cluster references that feed this link'},
+    {k:'2', claim:'The second claim',
+     because:'Its support.',
+     forces:'What it forces next.',
+     cav:[{t:'ours', x:'An inference of the author’s that appears in no cited source. ' +
+             'Render caveats WITH the claim, never behind a tap.'}],
+     src:'Cluster references'}
+  ],
+
+  /* Paged by SUBSECTION, not by cluster: whole clusters overflow the fit gate. */
+  clusters: {
+    A: {t:'First literature', lead:'One or two lines on what this cluster covers.',
+        subs:[{c:'A1', t:'A subsection', d:'What it establishes, at the level of structure.'},
+              {c:'A2', t:'Another', d:'Keep each to roughly one screen.'}]},
+    B: {t:'Second literature', lead:'Its remit.',
+        subs:[{c:'B1', t:'A subsection', d:'Its content.'}]}
+  },
+
+  sources: [
+    {n:'A source with a known mis-citation trap', m:'Venue Year · Authors', k:'A', lv:'B',
+     s:'What it actually claims, stated so a reader can check a citation against it.',
+     not:'What it must <strong>not</strong> be cited for. The precise trap — what it measured ' +
+         'versus what it gets cited for, an author order that is wrong everywhere, assumptions ' +
+         'nobody checks.',
+     ann:{t:'inc', x:'Why this rests on an incomplete read, if it does.'},
+     u:'https://example.org/'},
+    {n:'A source with no graded claim', m:'Venue Year', k:'B',
+     s:'A survey or standards document speaks to no graded claim, so it carries no grade.',
+     u:'https://example.org/'}
+  ],
+
+  open: {
+    intro:'What the corpus does not settle. Two annotations only, used where the sources ' +
+          'themselves qualify a claim — there is no "verified" marker, because certifying ' +
+          'every claim needs evidence the corpus does not contain.',
+    questions:[{q:'The highest-leverage open question?', w:'Why it decides something downstream.'}],
+    incomplete:[{h:'A claim resting on an abstract', x:'What has not been read.'}],
+    ours:[{h:'An unsourced inference', x:'Whose it is and why it is not in any cited work.'}]
+  }
+};
+
+/* ===================== presentation ===================== */
+const $=s=>document.querySelector(s), esc=h=>h;
+const KEYS=Object.keys(DATA.clusters), HUE={}; KEYS.forEach((k,i)=>HUE[k]='--k'+((i%4)+1));
+document.title=DATA.title; $('#brandT').textContent=DATA.title;
+
+/* anchor vocabulary — omitted entirely when the corpus has none */
+if(DATA.anchor){
+  $('#anchorBtn').innerHTML=DATA.anchor.levels.map(l=>
+    '<span class="lv"><span class="k">'+l.k+'</span><span class="g">'+l.gloss+'</span></span>').join('')
+    +'<span class="caret">▾</span>';
+  $('#anchorPanel').innerHTML='<table class="anchor"><thead><tr>'+
+    DATA.anchor.table.cols.map(c=>'<th>'+c+'</th>').join('')+'</tr></thead><tbody>'+
+    DATA.anchor.table.rows.map(r=>'<tr>'+r.map((c,i)=>'<td>'+c+'</td>').join('')+'</tr>').join('')+
+    '</tbody></table><div class="key">'+DATA.anchor.key+'</div>';
+  const ab=$('#anchorBtn'), ap=$('#anchorPanel'), sc=$('#scrim');
+  const set=o=>{ap.classList.toggle('open',o);sc.classList.toggle('open',o);
+    ab.setAttribute('aria-expanded',o?'true':'false')};
+  ab.addEventListener('click',()=>set(!ap.classList.contains('open')));
+  sc.addEventListener('click',()=>set(false));
+  addEventListener('keydown',e=>{if(e.key==='Escape')set(false)});
+}else{ $('#anchorBtn').remove(); $('#anchorPanel').remove(); }
+
+/* spine */
+let si=0;
+function drawSpine(){
+  const n=DATA.spine[si], g=$('#glyph'); g.innerHTML='';
+  DATA.spine.forEach((_,i)=>{
+    if(i) g.insertAdjacentHTML('beforeend','<span class="seg"></span>');
+    g.insertAdjacentHTML('beforeend','<span class="n '+(i===si?'here':i<si?'done':'')+'">'+(i+1)+'</span>');
+  });
+  $('#step').textContent='Link '+(si+1)+' of '+DATA.spine.length;
+  $('#chip').textContent=n.k; $('#chip').style.color='var(--focus)';
+  $('#claim').innerHTML=n.claim; $('#because').innerHTML=n.because; $('#forces').innerHTML=n.forces;
+  $('#cav').innerHTML=(n.cav||[]).map(c=>'<div class="caveat'+(c.t==='ours'?' ours':'')+'">'+
+    '<span class="tag">'+(c.t==='ours'?'○ ours, unsourced':'◐ read with care')+'</span> — '+c.x+'</div>').join('');
+  $('#srcline').innerHTML=n.src?'<b>Evidence behind this link</b>'+n.src:'';
+  $('#sprev').disabled=si===0; $('#snext').disabled=si===DATA.spine.length-1;
+  $('#p-spine .body-scroll').scrollTop=0;
+}
+$('#sprev').onclick=()=>{if(si>0){si--;drawSpine()}};
+$('#snext').onclick=()=>{if(si<DATA.spine.length-1){si++;drawSpine()}};
+drawSpine();
+
+/* clusters — paged by subsection */
+let ck=KEYS[0], cj=0;
+$('#ctabs').innerHTML=KEYS.map(k=>'<button role="tab" data-k="'+k+'">'+k+'</button>').join('');
+$('#ctabs').addEventListener('click',e=>{const b=e.target.closest('button');
+  if(b){ck=b.dataset.k;cj=0;drawCluster()}});
+function drawCluster(){
+  $('#ctabs').querySelectorAll('button').forEach(b=>{
+    const on=b.dataset.k===ck; b.setAttribute('aria-selected',on?'true':'false');
+    b.style.background=on?'var('+HUE[b.dataset.k]+')':'';
+  });
+  const c=DATA.clusters[ck], s=c.subs[cj];
+  $('#cbody').innerHTML=(cj===0?'<h2>'+ck+' · '+c.t+'</h2><p class="lead">'+c.lead+'</p>':'')+
+    '<div class="sub'+(cj===0?'':' first')+'"><div class="code" style="color:var('+HUE[ck]+')">'+s.c+
+    '<span style="color:var(--faint);font-weight:400"> · '+(cj+1)+' of '+c.subs.length+'</span></div>'+
+    '<div class="t">'+s.t+'</div><div class="d">'+s.d+'</div></div>';
+  $('#cprev').disabled=cj===0; $('#cnext').disabled=cj===c.subs.length-1;
+  $('#cbody').scrollTop=0;
+}
+$('#cprev').onclick=()=>{if(cj>0){cj--;drawCluster()}};
+$('#cnext').onclick=()=>{if(cj<DATA.clusters[ck].subs.length-1){cj++;drawCluster()}};
+drawCluster();
+
+/* sources — flat cards, exempt from the fit gate */
+let sf='all';
+$('#filterbar').innerHTML=['all'].concat(KEYS).map(k=>
+  '<button data-k="'+k+'">'+(k==='all'?'All':k)+'</button>').join('');
+$('#filterbar').addEventListener('click',e=>{const b=e.target.closest('button');
+  if(b){sf=b.dataset.k;drawSources()}});
+function drawSources(){
+  $('#filterbar').querySelectorAll('button').forEach(b=>
+    b.setAttribute('aria-pressed',b.dataset.k===sf?'true':'false'));
+  const l=DATA.sources.filter(s=>sf==='all'||s.k===sf);
+  $('#count').textContent=l.length+' of '+DATA.sources.length+
+    ' · a grade appears only where the source speaks to one';
+  $('#list').innerHTML=l.map(s=>'<div class="card" style="border-left-color:var('+HUE[s.k]+')">'+
+    '<div><span class="nm">'+s.n+'</span>'+(s.lv?'<span class="lv">'+s.lv+'</span>':'')+'</div>'+
+    '<div class="meta">'+s.m+'</div><div class="says">'+s.s+'</div>'+
+    (s.not?'<div class="not"><span class="tag">do not cite for</span><br>'+s.not+'</div>':'')+
+    (s.ann?'<div class="ann'+(s.ann.t==='ours'?' o':'')+'"><b>'+
+      (s.ann.t==='ours'?'○ ours':'◐ incomplete read')+'</b> — '+s.ann.x+'</div>':'')+
+    (s.u?'<a class="lk" href="'+s.u+'" target="_blank" rel="noopener">open source ↗</a>':'')+
+    '</div>').join('');
+}
+drawSources();
+
+/* open questions */
+$('#gapwrap').innerHTML='<p class="intro">'+DATA.open.intro+'</p><h2>The open questions</h2>'+
+  DATA.open.questions.map(g=>'<div class="big"><div class="q">'+g.q+'</div><div class="w">'+g.w+'</div></div>').join('')+
+  '<h2>◐ Resting on an incomplete read</h2>'+
+  DATA.open.incomplete.map(i=>'<div class="item"><span class="mk">◐</span> <b>'+i.h+'</b> — '+i.x+'</div>').join('')+
+  '<h2>○ Ours, in no cited source</h2>'+
+  DATA.open.ours.map(i=>'<div class="item"><span class="mk o">○</span> <b>'+i.h+'</b> — '+i.x+'</div>').join('');
+
+/* tabs */
+const T=DATA.tabs, order=[['spine',T.spine],['clusters',T.clusters],['sources',T.sources],['open',T.open]];
+$('#nav').innerHTML=order.map(([id,lab],i)=>
+  '<button data-p="'+id+'" aria-selected="'+(i===0)+'">'+lab+'</button>').join('');
+$('#nav').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return;
+  $('#nav').querySelectorAll('button').forEach(x=>x.setAttribute('aria-selected',x===b?'true':'false'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='p-'+b.dataset.p));
+});
+
+/* ---------------------------------------------------------------------------
+   FIT-CHECK CONTRACT. scripts/fit-check.sh iterates this list, calling show()
+   and then measuring every [data-fit] container. Keep it in step with the
+   reading surfaces, or the gate silently stops covering them. Source cards are
+   deliberately absent: they are browsed, not read.
+   --------------------------------------------------------------------------- */
+window.__fitScreens = (function(){
+  const list=[], show=p=>()=>{
+    document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===p));
+  };
+  DATA.spine.forEach((_,i)=>list.push({name:'spine-'+(i+1),
+    show:()=>{show('p-spine')(); si=i; drawSpine();}}));
+  KEYS.forEach(k=>DATA.clusters[k].subs.forEach((_,j)=>list.push({name:'cluster-'+k+(j+1),
+    show:()=>{show('p-clusters')(); ck=k; cj=j; drawCluster();}})));
+  return list;
+})();
+</script>
+</body>
+</html>

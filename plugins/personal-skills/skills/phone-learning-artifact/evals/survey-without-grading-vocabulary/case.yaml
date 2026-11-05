@@ -1,0 +1,11 @@
+schema_version: "1.1"
+name: survey-without-grading-vocabulary
+expected_outcome: |
+  A single self-contained HTML file. Critically, because this survey has no
+  evidence-grading vocabulary and advances no argument, the artifact invents
+  neither: no fabricated levels or grades, and no thesis attributed to the
+  survey. Surfaces that have nothing real to carry are omitted rather than
+  padded. The survey's own statement that it measured no outcome and is not
+  representative is carried. No reading-time or progress indicator.
+context:
+  scaffold_script: place-files.sh

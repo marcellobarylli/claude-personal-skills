@@ -1,0 +1,12 @@
+schema_version: "1.1"
+name: single-meta-analysis
+expected_outcome: |
+  A single self-contained HTML file adapting the format to one meta-analysis
+  rather than a connected corpus: moderators and the included studies each get a
+  navigable surface, and individual studies carry their own caveats. The
+  uncomfortable findings the authors flag - the prediction interval crossing
+  zero, the risk-of-bias gradient, the small-study effect, the overlapping
+  cohort - are surfaced rather than buried. The association is not presented as
+  causal. No reading-time or progress indicator.
+context:
+  scaffold_script: place-files.sh

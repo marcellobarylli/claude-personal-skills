@@ -1,0 +1,11 @@
+schema_version: "1.1"
+name: connected-corpus-with-grades
+expected_outcome: |
+  A single self-contained HTML file with no external subresources. The corpus's
+  E0/E1/E2 vocabulary is readable without any interaction, not hidden behind a
+  tap. Source cards carry both what each work claims and what it must not be
+  cited for, reproducing the corpus's own corrections. No reading-time estimate
+  or completion indicator. No "verified" marker. The one item the corpus cut as
+  out of scope does not appear.
+context:
+  scaffold_script: place-files.sh
