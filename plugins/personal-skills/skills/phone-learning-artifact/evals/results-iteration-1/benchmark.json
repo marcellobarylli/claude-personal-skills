@@ -1,0 +1,375 @@
+{
+  "metadata": {
+    "skill_name": "phone-learning-artifact",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-11-05T13:26:57Z",
+    "evals_run": [
+      "connected-corpus-with-grades",
+      "single-meta-analysis",
+      "survey-without-grading-vocabulary"
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": "connected-corpus-with-grades",
+      "eval_name": "connected-corpus-with-grades",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 987.7,
+        "tokens": 128746,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The result is a single HTML file that loads no external stylesheet, font, image or script, so it works offline as a local file.",
+          "passed": true,
+          "evidence": "No external link/script/img/source; no @import or url(http). Provenance comment excluded from grading."
+        },
+        {
+          "text": "The E0/E1/E2 (or equivalently named) evidence levels from the corpus are visible in the artifact without the reader having to tap or expand anything.",
+          "passed": true,
+          "evidence": "E0/E1/E2 pinned to the header on every screen; full table in a tap-dismiss overlay that does not reflow content beneath."
+        },
+        {
+          "text": "At least eight sources carry an explicit 'what this must not be cited for' style field, distinct from the description of what the source claims.",
+          "passed": true,
+          "evidence": "10 'not:' entries across 11 source cards (>=8 required)."
+        },
+        {
+          "text": "The artifact reproduces at least three of these specific corrections from the corpus: that the 92% figure holds only with gold passages supplied, that the author order is Ferreira, Naidoo, Kaur, that Osei et al. propose no readiness test, and that Sato's result is closed-world only.",
+          "passed": true,
+          "evidence": "4 of 4: gold-passage condition, Ferreira/Naidoo/Kaur order, Osei no readiness test, Sato closed-world."
+        },
+        {
+          "text": "The artifact displays no reading-time estimate, no percentage complete and no completion progress bar.",
+          "passed": true,
+          "evidence": "No progress element, no scroll-driven width %, no time language."
+        },
+        {
+          "text": "The Marchetti et al. deployment figures are marked as resting on an incomplete read, reflecting the corpus's own caveat that the full report was not consulted.",
+          "passed": true,
+          "evidence": "Marchetti marked as resting on executive summary and a talk, not the full report."
+        },
+        {
+          "text": "The artifact does not label any claim as verified, solid or confirmed in a way that certifies it as sound.",
+          "passed": true,
+          "evidence": "No verified/solid/confirmed certification; only the two annotations."
+        },
+        {
+          "text": "The author affiliation digression, which the corpus cut as out of scope rather than correcting, does not appear in the artifact.",
+          "passed": true,
+          "evidence": "Review finding 12 appears nowhere in the reading surfaces; the only occurrence was in the provenance comment recording that it was excluded."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "single-meta-analysis",
+      "eval_name": "single-meta-analysis",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 814.7,
+        "tokens": 121430,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The result is a single HTML file that loads no external stylesheet, font, image or script.",
+          "passed": true,
+          "evidence": "Single 52KB file, no external subresources."
+        },
+        {
+          "text": "The moderator analyses are presented as a navigable surface or structured table rather than buried in prose, and distinguish the significant moderators (measurement method, study design, risk of bias) from the non-significant ones (instrument, latitude, season).",
+          "passed": true,
+          "evidence": "Moderators are a 12-screen cluster surface; significant (dosimetry/design/bias) and null (instrument/latitude/season) both shown and distinguished."
+        },
+        {
+          "text": "Individual included studies appear as separate entries carrying their own caveats, including at least two of: Castellanos' 0.78 being high risk of bias, Petrova being a large near-null routinely omitted, and the Weller/Jaffar/Ruiz overlapping cohort.",
+          "passed": true,
+          "evidence": "3 of 3: Castellanos high-bias, Petrova near-null, Weller/Jaffar/Ruiz one cohort. 7 study cards with 'do not cite for'."
+        },
+        {
+          "text": "The artifact surfaces at least two of: the prediction interval crossing zero, the risk-of-bias gradient where higher-bias studies report larger effects, and the small-study effect adjusting the estimate to 0.24.",
+          "passed": true,
+          "evidence": "3 of 3: prediction interval crossing zero, bias gradient, trim-and-fill 0.24."
+        },
+        {
+          "text": "The artifact does not present the daylight-alertness association as causal, and conveys that all included studies are observational.",
+          "passed": true,
+          "evidence": "Observational framing throughout; association-not-intervention carried as a precedence test."
+        },
+        {
+          "text": "The artifact displays no reading-time estimate, no percentage complete and no completion progress bar.",
+          "passed": true,
+          "evidence": "No progress or time indicator."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "survey-without-grading-vocabulary",
+      "eval_name": "survey-without-grading-vocabulary",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 661.5,
+        "tokens": 106626,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The result is a single HTML file that loads no external stylesheet, font, image or script.",
+          "passed": true,
+          "evidence": "Single 39KB file, no external subresources."
+        },
+        {
+          "text": "The artifact does not invent an evidence-grading scheme, confidence level, quality tier or certainty rating for a survey that contains none. Any levels shown must come from the survey itself.",
+          "passed": true,
+          "evidence": "Anchor control deleted outright, not left empty; per-card level field removed. Notes state why."
+        },
+        {
+          "text": "The artifact does not attribute a thesis, argument or recommendation to the survey, which is explicitly descriptive and makes none.",
+          "passed": true,
+          "evidence": "No spine built; file opens on areas because the survey advances no argument."
+        },
+        {
+          "text": "The artifact carries the survey's own statement that no outcome was measured and that the sample is not representative.",
+          "passed": true,
+          "evidence": "8 matches; limits surface carries 'no outcome measured' and the unrepresentative sample."
+        },
+        {
+          "text": "The artifact displays no reading-time estimate, no percentage complete and no completion progress bar.",
+          "passed": true,
+          "evidence": "No progress or time indicator."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "connected-corpus-with-grades",
+      "eval_name": "connected-corpus-with-grades",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 6,
+        "failed": 2,
+        "total": 8,
+        "time_seconds": 577.9,
+        "tokens": 63754,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The result is a single HTML file that loads no external stylesheet, font, image or script, so it works offline as a local file.",
+          "passed": true,
+          "evidence": "Single 40KB file, zero external references."
+        },
+        {
+          "text": "The E0/E1/E2 (or equivalently named) evidence levels from the corpus are visible in the artifact without the reader having to tap or expand anything.",
+          "passed": true,
+          "evidence": "E0/E1/E2 rendered as three stacked cards in the flow, visible without interaction."
+        },
+        {
+          "text": "At least eight sources carry an explicit 'what this must not be cited for' style field, distinct from the description of what the source claims.",
+          "passed": true,
+          "evidence": "12 class='guard' caution boxes across 11 source entries (>=8 required)."
+        },
+        {
+          "text": "The artifact reproduces at least three of these specific corrections from the corpus: that the 92% figure holds only with gold passages supplied, that the author order is Ferreira, Naidoo, Kaur, that Osei et al. propose no readiness test, and that Sato's result is closed-world only.",
+          "passed": true,
+          "evidence": "4 of 4 traps present, all figures verified against the corpus."
+        },
+        {
+          "text": "The artifact displays no reading-time estimate, no percentage complete and no completion progress bar.",
+          "passed": false,
+          "evidence": "Scroll-progress bar plus localStorage scroll-position memory. Criterion 6 refuses both; no comprehension evidence supports either."
+        },
+        {
+          "text": "The Marchetti et al. deployment figures are marked as resting on an incomplete read, reflecting the corpus's own caveat that the full report was not consulted.",
+          "passed": true,
+          "evidence": "D1's 'summary and a talk, not full text' caveat kept prominent."
+        },
+        {
+          "text": "The artifact does not label any claim as verified, solid or confirmed in a way that certifies it as sound.",
+          "passed": true,
+          "evidence": "No certification marker."
+        },
+        {
+          "text": "The author affiliation digression, which the corpus cut as out of scope rather than correcting, does not appear in the artifact.",
+          "passed": false,
+          "evidence": "All 14 rows of the internal-review table reproduced, including row 12 'Author affiliation digression - cut as out of scope'. A scope cut, not a citation constraint, carried into the artifact."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "single-meta-analysis",
+      "eval_name": "single-meta-analysis",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8333,
+        "passed": 5,
+        "failed": 1,
+        "total": 6,
+        "time_seconds": 1024.7,
+        "tokens": 115329,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The result is a single HTML file that loads no external stylesheet, font, image or script.",
+          "passed": true,
+          "evidence": "Single 46KB file, no network calls."
+        },
+        {
+          "text": "The moderator analyses are presented as a navigable surface or structured table rather than buried in prose, and distinguish the significant moderators (measurement method, study design, risk of bias) from the non-significant ones (instrument, latitude, season).",
+          "passed": true,
+          "evidence": "Forest plot with nulls shown in grey plus a table twin; significant and null moderators distinguished."
+        },
+        {
+          "text": "Individual included studies appear as separate entries carrying their own caveats, including at least two of: Castellanos' 0.78 being high risk of bias, Petrova being a large near-null routinely omitted, and the Weller/Jaffar/Ruiz overlapping cohort.",
+          "passed": true,
+          "evidence": "3 of 3, each study a details card carrying the paper's own warning."
+        },
+        {
+          "text": "The artifact surfaces at least two of: the prediction interval crossing zero, the risk-of-bias gradient where higher-bias studies report larger effects, and the small-study effect adjusting the estimate to 0.24.",
+          "passed": true,
+          "evidence": "3 of 3, gathered into a 'five bits people skip' section."
+        },
+        {
+          "text": "The artifact does not present the daylight-alertness association as causal, and conveys that all included studies are observational.",
+          "passed": true,
+          "evidence": "Carries that the authors decline to recommend interventions."
+        },
+        {
+          "text": "The artifact displays no reading-time estimate, no percentage complete and no completion progress bar.",
+          "passed": false,
+          "evidence": "Scroll-progress element plus scroll-driven width percentage."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "survey-without-grading-vocabulary",
+      "eval_name": "survey-without-grading-vocabulary",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8,
+        "passed": 4,
+        "failed": 1,
+        "total": 5,
+        "time_seconds": 299.4,
+        "tokens": 46821,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The result is a single HTML file that loads no external stylesheet, font, image or script.",
+          "passed": true,
+          "evidence": "Single 24KB file, no network dependencies."
+        },
+        {
+          "text": "The artifact does not invent an evidence-grading scheme, confidence level, quality tier or certainty rating for a survey that contains none. Any levels shown must come from the survey itself.",
+          "passed": true,
+          "evidence": "No evaluative vocabulary introduced; chart categories use one accent colour rather than a good/bad scale."
+        },
+        {
+          "text": "The artifact does not attribute a thesis, argument or recommendation to the survey, which is explicitly descriptive and makes none.",
+          "passed": true,
+          "evidence": "Ranks, scores and recommends nothing."
+        },
+        {
+          "text": "The artifact carries the survey's own statement that no outcome was measured and that the sample is not representative.",
+          "passed": true,
+          "evidence": "5 matches; 'How to read this' box states no outcome is measured."
+        },
+        {
+          "text": "The artifact displays no reading-time estimate, no percentage complete and no completion progress bar.",
+          "passed": false,
+          "evidence": "Top reading-progress bar driven by scrollY, plus a 'Resume where you left off' localStorage control."
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 821.3,
+        "stddev": 163.2001,
+        "min": 661.5,
+        "max": 987.7
+      },
+      "tokens": {
+        "mean": 118934.0,
+        "stddev": 11269.2552,
+        "min": 106626,
+        "max": 128746
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.7944,
+        "stddev": 0.0419,
+        "min": 0.75,
+        "max": 0.8333
+      },
+      "time_seconds": {
+        "mean": 634.0,
+        "stddev": 365.8899,
+        "min": 299.4,
+        "max": 1024.7
+      },
+      "tokens": {
+        "mean": 75301.3333,
+        "stddev": 35683.9207,
+        "min": 46821,
+        "max": 115329
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.21",
+      "time_seconds": "+187.3",
+      "tokens": "+43633"
+    }
+  },
+  "notes": [
+    "DISCRIMINATION: only 4 of 19 assertions differ between arms. The +0.21 delta is carried almost entirely by ONE assertion repeated across all three cases (no time/progress indicator), plus one case-specific failure (scope cut reproduced).",
+    "NON-DISCRIMINATING (passed in both arms, so they pad both pass rates): content fidelity was already strong unaided. Baselines independently found all 4 mis-citation traps, produced 12 caution boxes across 11 sources, kept the incomplete-read caveat, preserved the narrowed synthesis claim, and avoided inventing a grading scheme for a descriptive survey. The skill's advantage is NOT 'notices the traps'.",
+    "THE ASSERTIONS UNDER-MEASURE THE REAL DIFFERENCE. Two large qualitative gaps were never asserted: (a) PROMPTS - 2 of 3 baselines added collapsed, optional self-check questions (corpus: 5 'Quick check' blocks; meta: 6 question-summaries incl. 'Which three moderators came out null?'), which is precisely the one prompt form with no supporting evidence; 0 of 3 with-skill runs did. (b) SELF-FLAGGING - with-skill runs marked their OWN derived figures as unsourced (survey: 9 marks, incl. that counts summing to 61 is its inference); baselines added derived content silently. Add both as assertions in iteration 2.",
+    "COST: +58% tokens (118.9k vs 75.3k) and +30% wall-clock (821s vs 634s). Real, and the skill should keep saying so. The 3 with-skill runs each ran the fit gate and reported numbers; one found and fixed a 375x667 failure by paging rather than trimming, and one recorded 320x568 as a known unfixed boundary rather than hiding it.",
+    "GRADER RELIABILITY (my own errors, fixed mid-run, worth repeating): (1) first detector looked for the word 'progress-bar' and missed a baseline whose element was named 'prog' - a false PASS on the key assertion; (2) grepping the artifact's own provenance comment produced 3 false FAILs against a correct with-skill run, which documents 'no @import' and 'scope cut excluded'. Grade rendered content and behaviour, never vocabulary or build notes."
+  ]
+}
