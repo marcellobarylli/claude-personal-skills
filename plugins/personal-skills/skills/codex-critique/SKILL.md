@@ -1,6 +1,6 @@
 ---
 name: codex-critique
-description: Get an independent, adversarial critique of a proposed design or feature from Codex before implementing it. Use when the user asks for a Codex critique, second opinion, or adversarial check on a proposal, or after proposing a non-trivial design the user may want pressure-tested. Requires the codex plugin (openai/codex-plugin-cc).
+description: Get an independent, adversarial critique of a proposed design or feature from Codex (falling back to a Claude subagent if Codex hits its usage limit) before implementing it. Use when the user asks for a Codex critique, second opinion, or adversarial check on a proposal, or after proposing a non-trivial design the user may want pressure-tested. Requires the codex plugin (openai/codex-plugin-cc).
 ---
 
 # Codex critique
@@ -36,6 +36,8 @@ Pressure-test a proposal with Codex before any code is written. Review-only: not
    > If the plan is sound, say so: no findings is a valid answer. Do not soften.
 
    Never include my own conclusion or recommendation in the prompt; it anchors Codex. State the goal and the proposal, not a verdict.
+
+   **Usage-limit fallback.** If the Codex run fails because of a usage, rate or quota limit (the output or `result <job-id>` says so; any other failure is not a fallback case, handle it per Notes), do not retry Codex. Dispatch a Claude subagent with the Agent tool instead: `subagent_type: "Plan"` (read-only, no Edit/Write), `effort: "high"` (`xhigh` only if the user asked for it), and the same prompt template and proposal file, verbatim, with "Codex" read as "you". Add to the prompt: read files only, do not run commands that change state or start jobs or servers. The same no-anchoring rule applies. Log it in `round-log` as the same `critique-dispatched`/`critique-returned` events, naming the critic as "Claude subagent (Codex usage limit)" and noting the limit message. In step 3, say in one line before the list that the critique came from a Claude subagent because Codex hit its usage limit; a Claude critic shares this session's model family, so weigh agreement accordingly. Everything else in step 3 is unchanged.
 
 3. **Log a `critique-returned` event with `round-log` before anything else**: it saves the critique verbatim to the trail. Then **present the critique and your recommendations as one numbered list**, so the user reads each finding and your verdict together without scrolling. Do not also print the full critique in a `<details>` block or repeat the findings in a separate table. For each finding:
 
