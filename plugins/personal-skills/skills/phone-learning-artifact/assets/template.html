@@ -34,6 +34,11 @@
     6 Remove time pressure; never frame it as preliminary. NO reading-time
       estimate, NO completion bar, NO "quick summary" framing. Largest lever.
 
+  PROSE follows the skill's references/style.md (McCarthy's rules, via Savage &
+  Yeh, Nature 2019). Run scripts/prose-audit.py before publishing. In short:
+  few dashes and never two sentences running, no bold or italics for emphasis
+  inside sentences, one idea per sentence, no "X, not Y" reflex.
+
   The position indicator shows position in an ARGUMENT (structural signalling,
   criterion 3 — supported). It is NOT a completion or time-remaining cue, which
   criterion 6 excludes. Keep that distinction if you edit it.
@@ -268,6 +273,8 @@ nav button[aria-selected="true"]{color:var(--text);border-top-color:var(--focus)
 /* =========================================================================
    DATA — replace everything in this block. The code below is presentation.
 
+   Every string here is prose the reader sees: write it to references/style.md.
+
    `not` is the signature field: what the source must NOT be cited for. Harvest
    these from errata, critique tables, limitations sections, and anywhere the
    corpus says "an earlier draft wrongly...". Expect them to be the artifact's
@@ -297,18 +304,17 @@ const DATA = {
         ['C','argued from theory; nothing measured','none','free']
       ]
     },
-    key: '<b>B is not a weak A.</b> A proxy can be perfectly reproducible and still tell you ' +
-         'nothing about the outcome: reproducibility is a property of the measurement, the ' +
-         'outcome is a property of the world. Collapsing the two is the error this corpus ' +
-         'makes most often — state the distinction the corpus actually hinges on here.'
+    key: 'How B differs from A, in plain sentences. A proxy can be reproducible and still ' +
+         'tell you nothing about the outcome. Reproducibility belongs to the measurement and ' +
+         'the outcome belongs to the world. State the distinction this corpus hinges on.'
   },
 
   /* Claims in dependency order. Count the real nodes; do not infer from headings. */
   spine: [
-    {k:'1', claim:'The first claim, with its <em>load-bearing phrase</em> marked',
-     because:'What this claim rests on, in full prose. Keep the connecting sentences — the ' +
-             'evidence supports diagrams ALONGSIDE prose, never instead of it.',
-     forces:'Why this <b>creates the demand</b> for the next link. One sentence.',
+    {k:'1', claim:'The first claim, stated flatly in one sentence',
+     because:'What this claim rests on, in full prose. Keep the connecting sentences, because ' +
+             'the evidence supports diagrams alongside prose and never instead of it.',
+     forces:'The next question or the next claim, in one plain sentence.',
      src:'Cluster references that feed this link'},
     {k:'2', claim:'The second claim',
      because:'Its support.',
@@ -330,9 +336,9 @@ const DATA = {
   sources: [
     {n:'A source with a known mis-citation trap', m:'Venue Year · Authors', k:'A', lv:'B',
      s:'What it actually claims, stated so a reader can check a citation against it.',
-     not:'What it must <strong>not</strong> be cited for. The precise trap — what it measured ' +
-         'versus what it gets cited for, an author order that is wrong everywhere, assumptions ' +
-         'nobody checks.',
+     not:'What it must not be cited for. Name the trap: what it measured against what it ' +
+         'gets cited for, an author order that is wrong everywhere, or an assumption nobody ' +
+         'checks.',
      ann:{t:'inc', x:'Why this rests on an incomplete read, if it does.'},
      u:'https://example.org/'},
     {n:'A source with no graded claim', m:'Venue Year', k:'B',
@@ -341,9 +347,9 @@ const DATA = {
   ],
 
   open: {
-    intro:'What the corpus does not settle. Two annotations only, used where the sources ' +
-          'themselves qualify a claim — there is no "verified" marker, because certifying ' +
-          'every claim needs evidence the corpus does not contain.',
+    intro:'What the corpus does not settle. Two annotations mark claims the sources ' +
+          'themselves qualify. There is no "verified" marker, because certifying every claim ' +
+          'needs evidence the corpus does not contain.',
     questions:[{q:'The highest-leverage open question?', w:'Why it decides something downstream.'}],
     incomplete:[{h:'A claim resting on an abstract', x:'What has not been read.'}],
     ours:[{h:'An unsourced inference', x:'Whose it is and why it is not in any cited work.'}]

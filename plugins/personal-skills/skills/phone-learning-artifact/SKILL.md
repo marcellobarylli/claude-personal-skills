@@ -1,225 +1,268 @@
 ---
 name: phone-learning-artifact
-description: Turn the findings of a meta-analysis, systematic review, literature survey, or any connected body of research into a phone-readable learning artifact — one self-contained HTML file built only on the instructional-design evidence that actually replicates. Use whenever someone wants research, a literature review, a reading list, a survey, study findings, or a dense technical document made readable on a phone, turned into a revision aid, or "easier to absorb" — and especially when they ask which design choices genuinely improve comprehension, because most popular answers (segmenting, pre-training, progressive disclosure, optimal line length, pretesting prompts) do not survive meta-analysis and this skill carries the corrected list.
+description: Turn the findings of a meta-analysis, systematic review, literature survey, or any connected body of research into a phone-readable learning artifact. The output is one self-contained HTML file built only on the instructional-design evidence that replicates, and written in plain prose to McCarthy's science-writing rules. Use whenever someone wants research, a literature review, a reading list, a survey, study findings, or a dense technical document made readable on a phone, turned into a revision aid, or "easier to absorb". Use it especially when they ask which design choices improve comprehension, because most popular answers (segmenting, pre-training, progressive disclosure, optimal line length, pretesting prompts) do not survive meta-analysis and this skill carries the corrected list.
 ---
 
 # Phone learning artifact
 
-Turn a body of research into something a human can actually absorb on a phone.
+This skill turns a body of research into something a person can absorb on a phone.
 
-The output is **one self-contained HTML file**: no build step, no framework, no external
-subresource. It opens offline as a local file, and can be published for a phone URL.
+The output is one self-contained HTML file. There is no build step, no framework and no external subresource.
+It opens offline as a local file and can be published for a phone URL.
 
-Two things make this worth a skill rather than improvisation. First, the instructional-design
-literature is **mostly wrong in the direction people expect** — the famous, intuitive design
-moves largely fail independent meta-analysis, and a first attempt will confidently rebuild
-them. Second, the one layout rule that *does* replicate has to be **measured**, not eyeballed,
-and the measurement is fiddly enough to get wrong.
+Three things make this worth a skill:
+- **The instructional-design literature misleads.** The famous, intuitive design moves mostly fail
+  independent meta-analysis, and a first attempt will rebuild them with confidence.
+- **The one layout rule that replicates has to be measured.** The measurement is easy to get wrong.
+- **Generated prose tires the reader.** A dash in every sentence, bold in every paragraph and a reveal at the
+  end of each claim wear the reader out by the third screen. The prose rules in `references/style.md` fix
+  this, and gate 9 checks them.
 
 ## What you are optimising
 
-Comprehension per unit of reading effort, on a **single pass**. Not memorisation. If the user
-asks for spaced repetition or flashcards, that is a different (and well-served) task — say so
-rather than quietly blending them, because the design rules differ.
+The goal is comprehension per unit of reading effort on a single pass. Memorisation is a different task. If
+the user asks for spaced repetition or flashcards, tell them so rather than blending the two, because the
+design rules differ.
 
-Be honest about the ceiling: instructional-design gains run **larger for system-paced than
-self-paced settings**, and a phone read is self-paced. The gain is real but modest. The
-durable value usually turns out to be the *evidence cards* (below), not the reading
-ergonomics.
+The gain has a ceiling. Instructional-design effects run larger in system-paced settings than self-paced ones,
+and a phone read is self-paced. The gain is real but modest. The lasting value usually comes from the evidence
+cards described below, not from the reading ergonomics.
 
 ## The six criteria that survive
 
-Full citations, effect sizes and the moderators are in `references/evidence.md` — read it
-before you justify a design decision to the user, and quote the independent effect size
-rather than the originating lab's.
+`references/evidence.md` holds the citations, effect sizes and moderators. Read it before you justify a
+design decision to the user, and quote the independent effect size rather than the originating lab's.
 
 | # | Criterion | What it forces |
 | --- | --- | --- |
-| 1 | **No reading unit requires scrolling or panning** | One conceptual unit per screen. This is the only layout rule with real evidence, and it is a **pass/fail gate you measure** — see *Fit check*. |
-| 2 | **Cut extraneous material** | Strip the apparatus: project bookkeeping, "still to do", revision tables, decorative anything. Best-evidenced lever available, and subtractive. |
-| 3 | **Signal structure** | Position in the argument always visible. |
-| 4 | **Diagrams *alongside* prose, not instead of it** | Keep the connecting prose *and* show the structure. The evidence is for *adding* a graphic, never for replacing text with one. |
-| 5 | **A compact table can beat informationally matched prose** | Render the corpus's core distinction as a table. |
-| 6 | **Remove time pressure; never frame it as preliminary** | No reading-time estimate, no completion bar, no "quick summary" framing. **The largest lever, and not a layout decision at all.** |
+| 1 | No reading unit requires scrolling or panning | One conceptual unit per screen. This is the only layout rule with real evidence. It is a pass/fail gate you measure (see *Fit check*). |
+| 2 | Cut extraneous material | Strip the apparatus: project bookkeeping, "still to do", revision tables, decoration. This is the best-evidenced lever, and it only removes. Applied to sentences, it is McCarthy's first rule. |
+| 3 | Signal structure | The reader can always see where they are in the argument. |
+| 4 | Diagrams alongside prose, not instead of it | Keep the connecting prose and show the structure. The evidence is for adding a graphic, never for replacing text with one. |
+| 5 | A compact table can beat informationally matched prose | Render the corpus's core distinction as a table. |
+| 6 | Remove time pressure and never frame it as preliminary | No reading-time estimate, no completion bar, no "quick summary" framing. This is the largest lever, and it is not a layout decision. |
 
 ## What to refuse, and why
 
-These are not oversights. Each was tried, checked, and failed — so when a design instinct
-pulls toward one, that instinct is the known failure mode, not a missing feature.
+Each of these was tried, checked and found to fail. When a design instinct pulls toward one, the instinct is
+the known failure mode.
 
-- **Segmenting into learner-paced chunks** — the evidence base is narrated animation; the
-  mechanism (interrupting a stream that outruns the reader) does not exist in static text.
-- **Pre-training (teach the vocabulary first, then the process)** — no meta-analysis exists,
-  no static-text experiment, non-significant in its own originating corpus.
-- **Split-attention as a reason to avoid cross-references** — the meta-analysis excludes
-  text-only separation *by construction*. A self-contained table sits in its non-significant
-  cell. You may still avoid "see §4" for ordinary usability; just don't claim evidence.
-- **Pretesting / prediction prompts** — benefit is confined to the pretested items; for text
-  the general effect is ≈ 0, and slightly negative.
-- **Progressive disclosure / tap-to-reveal** — the one direct test found it *faster but less
-  accurate*, and readers rated it *easier* while performing worse. Hover-for-definition
-  lowered comprehension too.
-- **Optimal line length (45–75 characters)** — craft convention, not a finding. On screens,
-  longer lines read *faster*.
-- **Pagination over scrolling** — null in the only powered phone replication. (Distinct from
-  criterion 1, which is about *requiring* scrolling at all.)
-- **Progress indicators and reading-time badges** — no comprehension evidence in either
-  direction. Omit them under criterion 6, not as a claim of their own.
-- **Disfluency / hard-to-read fonts** — does not replicate; equivalence established.
+- **Segmenting into learner-paced chunks.** The evidence base is narrated animation. Its mechanism, a stream
+  that outruns the reader, does not exist in static text.
+- **Pre-training (teach the vocabulary first, then the process).** No meta-analysis exists and no static-text
+  experiment. It is non-significant in its own originating corpus.
+- **Split-attention as a reason to avoid cross-references.** The meta-analysis excludes text-only separation
+  by construction, and a self-contained table sits in its non-significant cell. You may still avoid "see §4"
+  for ordinary usability. Just don't claim evidence for it.
+- **Pretesting and prediction prompts.** The benefit is confined to the pretested items. For text the general
+  effect is about zero and slightly negative.
+- **Progressive disclosure and tap-to-reveal.** The one direct test found it faster and less accurate. Readers
+  rated it easier while performing worse. Hover-for-definition lowered comprehension too.
+- **Optimal line length (45–75 characters).** This is craft convention, not a finding. On screens, longer
+  lines read faster.
+- **Pagination over scrolling.** It was null in the only powered phone replication. Criterion 1 is a
+  different rule, about requiring scrolling at all.
+- **Progress indicators and reading-time badges.** There is no comprehension evidence either way. Omit them
+  under criterion 6, without claiming more.
+- **Disfluency and hard-to-read fonts.** The effect does not replicate, and equivalence has been shown.
 
-Two to soften rather than drop: **expertise reversal** (real on average, but asymmetric and
-contested — don't strip scaffolding on its authority) and **self-explanation** (its
-comprehension-specific cell does not clear zero, and every study collected a response, so an
-*optional, uncollected* prompt is the one form never shown to work).
+Two findings should be softened rather than dropped:
+- **Expertise reversal** is real on average, but asymmetric and contested. Don't strip scaffolding on its
+  authority.
+- **Self-explanation** has a comprehension-specific cell that does not clear zero, and every study collected
+  a response. An optional, uncollected prompt is the one form never shown to work.
 
 ## Building it
 
 ### 1. Read the corpus and find its spine
 
-Identify, in order:
+Identify these, in order:
 
-- **The spine** — the claims in dependency order, where each creates the demand for the next.
-  Count the actual nodes; do not infer the number from section headings. If the corpus is a
-  pure survey with no argument, use the strongest organising sequence, or drop this surface
-  and open on clusters instead.
-- **The anchor vocabulary** — the small distinction the whole corpus hinges on, which readers
-  and authors keep collapsing. Evidence grades, study-design hierarchies, effect-size tiers,
-  maturity levels, a domain's own three-way split. Not every corpus has one; if it does, it
-  is the single highest-value thing to keep permanently on screen. If it does not, omit the
-  surface rather than invent one.
-- **The clusters** — the distinct literatures or themes.
-- **The sources** — every work, with what it *actually claims*.
-- **The gaps** — open questions, and claims the corpus itself hedges.
+- **The spine.** These are the claims in dependency order, where each creates the demand for the next. Count
+  the actual nodes rather than inferring them from section headings. A pure survey has no argument. For one,
+  use its strongest organising sequence, or drop this surface and open on the clusters.
+- **The anchor vocabulary.** This is the small distinction the whole corpus hinges on, which readers and
+  authors keep collapsing. Examples:
+  - evidence grades;
+  - study-design hierarchies;
+  - effect-size tiers;
+  - maturity levels;
+  - a domain's own three-way split.
+
+  Not every corpus has one. If it does, it is the most valuable thing to keep on screen. If it does not, omit
+  the surface rather than invent one.
+- **The clusters.** These are the distinct literatures or themes.
+- **The sources.** List every work, with what it actually claims.
+- **The gaps.** These are the open questions, plus the claims the corpus itself hedges.
 
 ### 2. Apply source precedence
 
-**Where a later document in the corpus narrows a claim an earlier one still states broadly,
-the later wording wins.** Corrections frequently fail to propagate backwards: an errata note,
-a revision log, or a critique response will narrow something the main text still asserts in
-its original form. A faithful transcription of the broad version silently reinstates a claim
-the authors already retracted.
+A later document in the corpus sometimes narrows a claim that an earlier one still states broadly. When it
+does, the later wording wins. Corrections often fail to travel backwards. An errata note, a revision log or a
+critique response narrows something the main text still asserts in its original form. A faithful
+transcription of the broad version then reinstates a claim the authors already retracted.
 
-Before extracting, look for the corpus's own record of corrections — revision notes, response
-letters, critique tables, errata — and build a precedence list. Treat each as a regression
-test later.
+Before extracting, look for the corpus's record of corrections, such as revision notes, response letters,
+critique tables and errata. Build a precedence list from them and treat each entry as a regression test.
 
 ### 3. Write the evidence cards
 
-**This is the highest-value surface and usually the reason the artifact earns its keep.**
-Per source: name · venue/year · **what it actually claims** · **what it must not be cited
-for** · its grade or level *where one applies* · link.
+This surface usually justifies the artifact. Each source gets one card with these fields:
+- name;
+- venue and year;
+- what it actually claims;
+- what it must not be cited for;
+- its grade or level, where one applies;
+- a link.
 
-The "do not cite for" field is the signature move. Dense corpora accumulate precise
-mis-citation traps — a study that measured X being routinely cited for Y, an author order
-that is wrong everywhere, a theoretical synthesis cited for an effect size, a bound whose
-assumptions nobody checks. Spread across tens of thousands of words these are unholdable; as
-a filterable field they are checkable in seconds.
+The "do not cite for" field is the signature move. Dense corpora collect precise mis-citation traps:
+- a study that measured X is cited for Y;
+- an author order is wrong everywhere;
+- a theoretical synthesis is cited for an effect size;
+- nobody checks a bound's assumptions.
 
-Harvest them from errata, critique tables, "limitations" sections, and any place the corpus
-says "an earlier draft wrongly…". Then verify each reached a card — see *Gates*.
+Spread across tens of thousands of words, these traps are hard to keep track of. Put in one field you can
+filter, each one takes seconds to check.
 
-Two rules keep this honest:
+Harvest them from errata, critique tables, limitations sections, and any place the corpus says "an earlier
+draft wrongly…". Then check that each one reached a card (see *Gates*).
 
-- **Attach a grade or level only where the source speaks to one.** A methods survey or a
-  standards document often speaks to no graded claim at all; forcing a level on it
-  manufactures the exact category error the vocabulary exists to prevent. Expect a large
-  share of cards to carry none.
-- **Use at most two annotations, and only where the corpus itself qualifies something**:
-  *incomplete read* (rests on an abstract, a publisher record, secondhand coverage) and
-  *ours / unsourced* (the author's own inference, in no cited work). **Do not add a
-  "verified" or "solid" marker** — certifying every claim needs evidence the corpus does not
+Two rules keep the cards honest:
+
+- **Attach a grade or level only where the source speaks to one.** A methods survey or a standards document
+  often speaks to no graded claim. Forcing a level onto it manufactures the category error the vocabulary
+  exists to prevent. Expect many cards to carry none.
+- **Use at most two annotations, and only where the corpus itself qualifies something.**
+  - *Incomplete read*: the card rests on an abstract, a publisher record or secondhand coverage.
+  - *Ours / unsourced*: the claim is the author's own inference and appears in no cited work.
+
+  Do not add a "verified" or "solid" marker. Certifying every claim needs evidence the corpus does not
   contain, and a false certification is worse than no marker.
 
-### 4. Build from the template
+### 4. Write the prose
 
-`assets/template.html` is a working skeleton carrying the structural fixes that cost
-iterations to find. Copy it, replace the `DATA` block, keep the CSS and the interaction code.
+Read `references/style.md` before writing any sentence the reader will see. It holds:
+- McCarthy's rules, from Savage and Yeh's *Nature* column;
+- the two external texts the owner approved as the voice to imitate;
+- the habits that made earlier artifacts tiring, each tied to the rule it breaks.
+
+The short version:
+- **One idea per sentence and one message per paragraph.**
+- **The claim comes first, plainly.** No reveal, no "not the one you expect".
+- **Dashes are rare.** A dash marks the one clause that matters most, never two sentences in a row. Asides go
+  in parentheses, and a second idea gets a full stop.
+- **No bold or italics for emphasis inside sentences.** Labels and field names may be bold.
+- **Cut intensifiers, tagalong clauses and talk about the text.**
+- **Cut "X, not Y" unless the rejected X is a claim someone actually made.**
+- **Keep defined terms exact.** The anchor vocabulary and technical terms repeat. Vary only ordinary words.
+
+The `forces` field on a spine node attracts the worst habits. Keep it to one plain sentence that names the
+next question or the next claim.
+
+### 5. Build from the template
+
+`assets/template.html` is a working skeleton. It carries the structural fixes that took several iterations to
+find. Copy it, replace the `DATA` block, and keep the CSS and the interaction code.
 `references/architecture.md` explains each surface and what to do when a corpus lacks one.
 
-Content lives in a single `DATA` block separate from presentation, so re-syncing to the
-sources is a data edit. Put provenance — which version of the corpus this was built from, the
-sync rule, the precedence list, the test results — in an HTML comment at the head of the file
-rather than a second file nobody will keep aligned.
+Content lives in a single `DATA` block separate from presentation, so a re-sync to the sources is a data edit.
+Put the provenance in an HTML comment at the head of the file:
+- which version of the corpus the artifact was built from;
+- the sync rule;
+- the precedence list;
+- the gate results.
 
-### 5. Run the gates
+A second file would drift out of step.
 
-Content fidelity matters more than rendering. Run all of these and report the numbers.
+### 6. Run the gates
 
-1. **Precedence audit.** Every narrowed claim appears in its narrow form. Use the precedence
-   list from step 2 as regression tests.
-2. **Grade audit.** Every grade asserted matches the corpus's own wording; cards with no
-   graded claim carry none.
-3. **Mis-citation coverage.** Walk the corpus's errata and critique records item by item.
-   Each constraint on how a source may be cited reaches that source's card. Scope cuts — items
-   removed as out of scope rather than corrected — must *not* appear.
-4. **Annotation audit.** Every annotation traces to a specific qualification in the sources.
-   Nothing the corpus hedges renders unhedged.
-5. **Fit check** (criterion 1) — see below. Pass/fail, not preference.
-6. **Tap-independence.** With every expander shut, the artifact reads as a complete text. If
-   closing one loses a proposition, that content was in the wrong place.
-7. **Offline.** No stylesheet, font, image, script, `@import`, `fetch` or XHR. Only outbound
-   `<a>` links. Say plainly that a *hosted* copy still needs the network for the first load
-   unless a service worker is added.
-8. **Condensation audit.** `scripts/condensation-audit.py <artifact> <source>...` Gates 1–4
-   check fidelity to the **corpus**. This checks fidelity to the **sentence** — whether
-   shortening a source sentence dropped something that changes what it claims. It is a
-   distinct failure mode with a distinct origin: the traps in gate 3 come from the corpus,
-   but this one is introduced *by you*, because the artifact is a compression step. A
-   perfectly faithful corpus can still be misreported here.
+Content fidelity matters more than rendering. Run every gate and report the numbers.
 
-   It detects one high-precision pattern — a comparative or quantity word surviving while
-   the noun it governed is dropped ("preserves far more per step" — more *what*?) — found in
-   real review when a reader asked that exact question of a published artifact. Low recall
-   by design: a clean run means this mechanically-checkable error is absent, not that the
-   prose is faithful. **Read the prose too**, especially anywhere you compressed a sentence
-   carrying a number, a scope condition, or a negation.
+1. **Precedence audit.** Every narrowed claim appears in its narrow form. The precedence list from step 2
+   supplies the regression tests.
+2. **Grade audit.** Every grade matches the corpus's own wording. Cards with no graded claim carry none.
+3. **Mis-citation coverage.** Walk the corpus's errata and critique records item by item. Each constraint on
+   how a source may be cited reaches that source's card. Scope cuts must not appear: those are items removed
+   as out of scope rather than corrected.
+4. **Annotation audit.** Every annotation traces to a specific qualification in the sources. Nothing the
+   corpus hedges appears without its hedge.
+5. **Fit check** (criterion 1). See below. It is pass/fail.
+6. **Tap-independence.** With every expander shut, the artifact reads as a complete text. If closing one
+   loses a proposition, that content was in the wrong place.
+7. **Offline.** No stylesheet, font, image, script, `@import`, `fetch` or XHR. Only outbound `<a>` links are
+   allowed. Tell the user that a hosted copy still needs the network for the first load unless a service
+   worker is added.
+8. **Condensation audit.** Run `scripts/condensation-audit.py <artifact> <source>...`.
+   - **What it checks.** Gates 1 to 4 check fidelity to the corpus. This one checks fidelity to each sentence:
+     whether shortening a source sentence dropped something that changes its claim. The artifact is a
+     compression step, so this error is introduced by you, and a faithful corpus can still be misreported.
+   - **What it detects.** It catches one high-precision pattern. A comparative survives while its noun is
+     dropped ("preserves far more per step": more of what?). A reader asked exactly that of a published
+     artifact.
+   - **Limits.** Its recall is low by design. Read the prose too, especially wherever you compressed a
+     sentence that carries a number, a scope condition or a negation.
+9. **Prose audit.** Run `scripts/prose-audit.py <artifact>`. It fails the artifact on three counts:
+   - more than six dash uses per 1000 words (the *Nature* column runs at 4.5);
+   - two consecutive sentences with dashes;
+   - more than two bold spans per 1000 words inside sentences.
 
-### Fit check — measure, don't eyeball
+   It also lists warnings: reflexive contrasts, stacked transitions, intensifiers, long sentences and
+   semicolons. Judge each warning, because good prose triggers some. Then read every screen aloud once and
+   apply the cut test from `references/style.md`. The script is a floor, and passing it does not make the
+   prose good.
 
-`scripts/fit-check.sh` measures overflow with the viewport geometry **and** the `clamp()`
-font size pinned to a target phone. Both matter: headless Chrome silently ignores
-`--window-size` for the viewport (it reported 756px when asked for 390px), and a narrower
-screen can paradoxically *fit more* because a `vw`-based font shrinks with it. Measuring at
-the wrong width gives confident, wrong answers in both directions.
+### Fit check: measure, don't eyeball
+
+`scripts/fit-check.sh` measures overflow with two things pinned to a target phone: the viewport geometry and
+the `clamp()` font size. Both matter.
+- Headless Chrome silently ignores `--window-size` for the viewport. It reported 756px when asked for 390px.
+- A narrower screen can fit more, because a `vw`-based font shrinks with it.
+
+Measuring at the wrong width gives confident, wrong answers in both directions.
 
 ```bash
 scripts/fit-check.sh path/to/artifact.html 390 844
 scripts/fit-check.sh path/to/artifact.html 360 800
 ```
 
-It reports per-screen overflow and flags horizontal overflow and tap targets under 44pt.
+It reports overflow per screen and flags horizontal overflow and tap targets under 44pt.
 
 Three failures to expect, all found this way:
 
-- **A cluster is too big to be one screen.** Page by the *smallest* conceptual unit — the
-  subsection, not the cluster. Whole clusters overflowed by ~300px. Page down rather than
-  trim, because the summaries are substance, not apparatus.
-- **A pinned panel that pushes layout.** An expanding header shrank every content screen by
-  160–430px. Make it an **overlay** with a tap-dismiss scrim and Escape; the screen beneath
-  must not reflow.
-- **A control that inherits the UA's `buttontext`.** Wherever a palette and the browser's
-  colour scheme desynchronise, such a control renders invisible. Set colour explicitly on
-  anything that must always read.
+- **A cluster is too big for one screen.** Page by the smallest conceptual unit, which is the subsection, not
+  the cluster. Whole clusters overflowed by about 300px. Page down rather than trim, because the summaries are
+  substance.
+- **A pinned panel pushes the layout.** An expanding header shrank every content screen by 160–430px. Make it
+  an overlay with a tap-dismiss scrim and Escape, so the screen beneath does not reflow.
+- **A control inherits the browser's `buttontext` colour.** Wherever the palette and the browser's colour
+  scheme fall out of step, that control turns invisible. Set colour explicitly on anything that must always
+  read.
 
-Reference cards are **exempt** from the gate: they are browsed, not read, and truncating a
-mis-citation note to fit a screen cuts the nuance that justifies it.
+Reference cards are exempt from this gate. Readers browse them rather than read them, and cutting a
+mis-citation note to fit a screen loses the nuance that justifies it.
 
 ## Reporting back
 
-Give the user the six criteria you built against, the gate numbers, and — importantly — the
-design moves you *refused* and why. That list is often the most useful output, because it is
-what they would otherwise have asked you to add.
+Give the user:
+- the six criteria you built against;
+- the gate numbers, including the prose audit's three rates;
+- the design moves you refused, and why.
 
-Tell them the honest bound (modest, self-paced) rather than overselling. If any check failed,
-say which and what it would take.
+The refusals are often the most useful part, because they are what the user would otherwise ask you to add.
+
+State the bound honestly: the gain is modest and self-paced. If a check failed, say which one and what fixing
+it would take. Write the report to `references/style.md` as well.
 
 ## Bundled files
 
-- `references/evidence.md` — the verified instructional-design findings: citations, DOIs,
-  effect sizes, moderators, what each study actually measured, and what must not be claimed.
-  Read before justifying a design choice.
-- `references/architecture.md` — the surfaces in detail, how to adapt them to a corpus that
-  lacks a spine or an anchor vocabulary, and the interaction rules.
-- `scripts/fit-check.sh` — the viewport-accurate overflow harness.
-- `scripts/condensation-audit.py` — gate 8; finds comparatives whose object was dropped.
-- `assets/template.html` — working skeleton; replace the `DATA` block.
+- `references/evidence.md` holds the instructional-design findings: citations, DOIs, effect sizes, moderators,
+  what each study measured, and what must not be claimed. Read it before justifying a design choice.
+- `references/architecture.md` describes the surfaces in detail. It covers adapting them to a corpus without a
+  spine or an anchor vocabulary, and the interaction rules.
+- `references/style.md` holds the prose rules, the approved models and the habits to avoid. Read it before
+  writing.
+- `scripts/fit-check.sh` is the viewport-accurate overflow harness.
+- `scripts/condensation-audit.py` is gate 8. It finds comparatives whose object was dropped.
+- `scripts/prose-audit.py` is gate 9. It counts dash rate, dash runs and bold in prose, and lists the softer
+  habits.
+- `assets/template.html` is the working skeleton. Replace its `DATA` block.
