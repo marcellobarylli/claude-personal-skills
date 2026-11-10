@@ -79,6 +79,16 @@ The effect is modest and real. It covers headings, position indicators and expli
 The multimedia principle tests adding a graphic to text. It never tests replacing text with one, so an
 instinct to "turn the prose into a diagram" inverts the finding.
 
+**Applied to retrieved figures.** This finding is why every argument and domain screen carries one to three
+figures. Two limits come with it.
+- The graphics in the multimedia corpus depict the content of the text. A figure that is only on topic (a
+  photo of the lab, a logo, a stock image) is a seductive detail, which costs *g* ≈ −0.33 to −0.41 (criterion
+  2). Relevance is the condition, so a screen without a representative figure gets none.
+- The redundancy moderator in Schroeder & Cenkci (2018) puts a diagram intelligible alone in a
+  non-significant cell (*g* = 0.26). No study here tests a figure placed below the text on a phone, one
+  scroll away. Placing it there keeps criterion 1 intact for the text. That trade is a design judgement, so
+  claim no effect size for the placement.
+
 ### 5. A compact table can beat informationally matched prose
 
 **Brick, C., McDowell, M., & Freeman, A. L. J. (2020).** Risk communication in tables versus text: a

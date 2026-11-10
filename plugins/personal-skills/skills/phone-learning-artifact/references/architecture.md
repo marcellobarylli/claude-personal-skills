@@ -1,6 +1,6 @@
 # The surfaces, and how to adapt them
 
-The artifact has four surfaces plus one pinned element. Most corpora want all of them. A surface with nothing
+The artifact has four surfaces plus one pinned element. The spine and cluster screens also carry figures. Most corpora want all of them. A surface with nothing
 real to put in it should be removed rather than padded. That is criterion 2 (cut extraneous material), the
 best-evidenced lever available and the only one that works purely by removal.
 
@@ -11,10 +11,11 @@ All prose on every surface follows `style.md`.
 1. [The pinned anchor vocabulary](#1-the-pinned-anchor-vocabulary)
 2. [Surface 1: the spine](#2-surface-1-the-spine)
 3. [Surface 2: the clusters](#3-surface-2-the-clusters)
-4. [Surface 3: the evidence cards](#4-surface-3-the-evidence-cards)
-5. [Surface 4: what is open](#5-surface-4-what-is-open)
-6. [Interaction rules](#6-interaction-rules)
-7. [Adapting to an awkward corpus](#7-adapting-to-an-awkward-corpus)
+4. [Figures on the spine and cluster screens](#4-figures-on-the-spine-and-cluster-screens)
+5. [Surface 3: the evidence cards](#5-surface-3-the-evidence-cards)
+6. [Surface 4: what is open](#6-surface-4-what-is-open)
+7. [Interaction rules](#7-interaction-rules)
+8. [Adapting to an awkward corpus](#8-adapting-to-an-awkward-corpus)
 
 ---
 
@@ -82,7 +83,37 @@ The clusters are the distinct literatures or themes. They show the reader the sh
 case it overflowed by about 300px. The choice is between paging down and trimming, and trimming loses
 substance. Show the cluster's lead only on its first subsection, so it does not cost height on every screen.
 
-## 4. Surface 3: the evidence cards
+## 4. Figures on the spine and cluster screens
+
+Every spine node and every cluster subsection carries one to three figures. SKILL.md step 5 covers choosing
+and retrieving them. This section covers how they sit on the screen.
+
+**The text fits and the figures follow.** The figures render below the text, inside the screen's scroll
+container, in a `[data-fit-exempt]` region. The fit check measures the text down to that region and ignores
+the figures. A one-line cue ("↓ 2 figures below") closes the text, so a reader whose first figure falls below
+the fold knows it is there.
+
+**The text stands without the figures.** A caption names where to look. It never carries a proposition the
+text lacks, because gate 6 requires a complete text with nothing opened or scrolled to.
+
+**Each figure declares where it came from.** `from:'evidence'` is a figure from a source the screen cites.
+`from:'illustration'` is a public figure from outside the cited evidence, and the template prefixes its
+caption with a label saying so. `from:'drawn'` is an SVG made for the artifact from the sources' own numbers.
+A reader who mistakes an illustration for the evidence has made a mis-citation, so the label is required.
+
+**A white frame in both themes.** Paper figures assume a white page. In dark mode, black axis labels would
+otherwise sit on a near-black ground.
+
+**Tap to enlarge.** A tap opens the figure at full resolution in an overlay, which closes on tap and on
+Escape. The figure is already visible before the tap, so this adds pixels and hides nothing.
+
+**Size.** `figures.py prep` keeps each image under 180 KB, and the fit check fails one over 300 KB. Thirty
+figures come to about 5 MB.
+
+**No figure is better than a decorative one.** When no figure shows the claim, the screen carries `figs:[]`
+and a `nofig` reason. The fit check lists it, and the reason goes to the user.
+
+## 5. Surface 3: the evidence cards
 
 Each source gets one card, filterable by cluster, with these fields:
 - name;
@@ -129,7 +160,7 @@ level and 25 rightly carried none.
 Readers browse cards rather than read them, so a card may be taller than a screen. Cutting a trap note to fit
 is the one place where the layout rule would destroy the content it is meant to serve.
 
-## 5. Surface 4: what is open
+## 6. Surface 4: what is open
 
 This surface gathers the open questions and the two annotations in one place.
 
@@ -145,7 +176,7 @@ A missing marker is honest, and a false certification is not. A false one does t
 something other than the reader compiled the corpus, because the reader cannot then rely on remembering having
 checked a claim.
 
-## 6. Interaction rules
+## 7. Interaction rules
 
 **Nothing load-bearing goes behind a tap.** Caveats render with their claim. With every expander shut, the
 artifact must read as a complete text. If closing one loses a proposition, that content was in the wrong
@@ -163,7 +194,8 @@ that had to be readable at all times.
 **No prompts, no time estimate, no completion bar.** See the refusals list in the skill.
 
 **Keep it self-contained.**
-- No stylesheet, font, image, script, `@import`, `fetch` or XHR.
+- No remote stylesheet, font, image, script, `@import`, `fetch` or XHR. Figures are data URIs written by
+  `figures.py inline`.
 - Only outbound `<a>` links.
 - Tell the user that a hosted copy still needs the network for the first load unless a service worker is
   added. The local file is the one that works offline.
@@ -171,7 +203,7 @@ that had to be readable at all times.
 **Keep the fit contract in step.** `window.__fitScreens` is the list the harness iterates. If you add a screen
 without adding it there, the gate stops covering it and says nothing.
 
-## 7. Adapting to an awkward corpus
+## 8. Adapting to an awkward corpus
 
 | The corpus… | Do this |
 | --- | --- |

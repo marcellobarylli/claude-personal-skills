@@ -151,6 +151,11 @@ The emphasis rule applies to sentences.
 dramatise, promise a reveal or comment on its own importance. Most of the habits in §3 were found in this
 field.
 
+**A figure caption says where to look.** One or two sentences name the part of the figure that carries the
+claim and what it shows ("the gap between the two left bars is the effect stated above"). A caption does not
+restate the screen's text, praise the figure or introduce a proposition the text lacks. The credit line is a
+label: source, figure number, licence.
+
 ## 5. The prose audit
 
 `scripts/prose-audit.py <artifact.html>` counts what can be counted:

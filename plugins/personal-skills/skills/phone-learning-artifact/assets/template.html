@@ -43,6 +43,17 @@
   criterion 3 — supported). It is NOT a completion or time-remaining cue, which
   criterion 6 excludes. Keep that distinction if you edit it.
 
+  FIGURES. Every spine node and every cluster subsection carries 1-3 figures
+  (criterion 4: Text+Diagrams g = 0.45). They sit BELOW the text, in the
+  [data-fit-exempt] region: the text must still fit one screen, and the reader
+  scrolls only to reach the figures. A figure must show what the text claims.
+  A merely topical image is a seductive detail (g = -0.33 to -0.41), so a
+  panel with no representative figure gets nofig:'<reason>', not decoration.
+  Images live in figures/ and are embedded by `scripts/figures.py inline`,
+  which fills the FIGS block. Never paste base64 by hand.
+  <List each figure's licence here, and flag any that is not openly licensed
+  before the artifact is shared.>
+
   DO NOT ADD:
     - Tap-to-reveal for anything load-bearing. Layering measured FASTER BUT
       LESS ACCURATE (N=749) and was rated easier while being worse. Caveats
@@ -213,6 +224,29 @@ main{flex:1 1 auto;min-height:0;position:relative}
 .item .mk{font-weight:700;color:var(--warn)}
 .item .mk.o{color:var(--ours)}
 
+/* ---- figures: below the text, outside the fit gate ([data-fit-exempt]) ---- */
+.figcue{font-size:.74em;color:var(--faint);margin-top:.45em}
+.figs{padding:.1em 0 1em}
+.fig{margin:.8em 0 0}
+/* White frame in both themes: paper figures assume a white page, and dark
+   mode would otherwise put black axis labels on a near-black ground. */
+.figbtn{display:block;width:100%;padding:.4em;border:1px solid var(--rule);border-radius:6px;
+  background:#fff;color:#191817;cursor:zoom-in;font:inherit}
+.figbtn img{display:block;width:100%;height:auto;max-height:72dvh;object-fit:contain}
+.fig.missing .figbtn{min-height:120px;color:#8a1c1c;font-weight:700;cursor:default}
+.fig figcaption{font-size:.8em;line-height:1.45;margin-top:.4em}
+.fig .ftag{font-weight:700;color:var(--warn)}
+.fig .cr{display:block;font-size:.9em;color:var(--faint);margin-top:.15em}
+.fig .cr a{display:inline-flex;align-items:center;min-height:44px}
+/* Enlarge overlay: the figure is already on screen; this only adds pixels. */
+#lightbox{display:none;position:fixed;inset:0;z-index:60;background:#fff;overflow:auto;
+  -webkit-overflow-scrolling:touch}
+#lightbox.open{display:block}
+#lightbox img{display:block;max-width:none;margin:52px auto 1em}
+#lbClose{position:fixed;top:calc(6px + env(safe-area-inset-top));right:8px;min-width:44px;min-height:44px;
+  border:1px solid #cdc8c0;border-radius:22px;background:#fff;color:#191817;font:inherit;
+  font-size:1.1em;cursor:pointer;z-index:61}
+
 /* ---- bottom nav ---- */
 nav{flex:0 0 auto;display:flex;background:var(--surface);border-top:1px solid var(--rule);
   padding-bottom:env(safe-area-inset-bottom)}
@@ -244,6 +278,7 @@ nav button[aria-selected="true"]{color:var(--text);border-top-color:var(--focus)
         <div class="forces" id="forces"></div>
         <div id="cav"></div>
         <div class="srcline" id="srcline"></div>
+        <div id="sfigs"></div>
       </div>
     </div>
     <div class="pager"><button id="sprev">← Back</button><button id="snext">Next →</button></div>
@@ -268,6 +303,9 @@ nav button[aria-selected="true"]{color:var(--text);border-top-color:var(--focus)
 </main>
 
 <nav role="tablist" id="nav"></nav>
+<div id="lightbox" role="dialog" aria-modal="true" aria-label="Enlarged figure">
+  <button id="lbClose" type="button" aria-label="Close">✕</button><img id="lbImg" alt="">
+</div>
 
 <script>
 /* =========================================================================
@@ -315,22 +353,36 @@ const DATA = {
      because:'What this claim rests on, in full prose. Keep the connecting sentences, because ' +
              'the evidence supports diagrams alongside prose and never instead of it.',
      forces:'The next question or the next claim, in one plain sentence.',
-     src:'Cluster references that feed this link'},
+     src:'Cluster references that feed this link',
+     /* 1-3 per node. from: 'evidence' (a figure from a source behind this link),
+        'illustration' (a public figure from outside the cited evidence) or
+        'drawn' (made for this artifact from the sources' own numbers).
+        cap names what to look at and how it bears on the claim. */
+     figs:[{img:'example-fig', from:'evidence',
+            alt:'What the figure depicts, for a reader who cannot see it.',
+            cap:'Where to look and what it shows. The left pair of bars is the claim above.',
+            credit:'Author et al. Year, Fig. 3b · CC BY 4.0', u:'https://example.org/'}]},
     {k:'2', claim:'The second claim',
      because:'Its support.',
      forces:'What it forces next.',
      cav:[{t:'ours', x:'An inference of the author’s that appears in no cited source. ' +
              'Render caveats WITH the claim, never behind a tap.'}],
-     src:'Cluster references'}
+     src:'Cluster references',
+     /* Only when no representative figure exists after all three tiers. The
+        fit check reports it; the reason goes to the user. */
+     figs:[], nofig:'Why no figure shows this claim, and what was searched.'}
   ],
 
   /* Paged by SUBSECTION, not by cluster: whole clusters overflow the fit gate. */
   clusters: {
     A: {t:'First literature', lead:'One or two lines on what this cluster covers.',
-        subs:[{c:'A1', t:'A subsection', d:'What it establishes, at the level of structure.'},
-              {c:'A2', t:'Another', d:'Keep each to roughly one screen.'}]},
+        subs:[{c:'A1', t:'A subsection', d:'What it establishes, at the level of structure.',
+               figs:[{img:'example-fig', from:'illustration', alt:'Alt text.',
+                      cap:'What this shows and which part of the subsection it supports.',
+                      credit:'Wikimedia Commons, Name · CC BY-SA 4.0', u:'https://example.org/'}]},
+              {c:'A2', t:'Another', d:'Keep each to roughly one screen.', figs:[], nofig:'Reason.'}]},
     B: {t:'Second literature', lead:'Its remit.',
-        subs:[{c:'B1', t:'A subsection', d:'Its content.'}]}
+        subs:[{c:'B1', t:'A subsection', d:'Its content.', figs:[], nofig:'Reason.'}]}
   },
 
   sources: [
@@ -356,8 +408,34 @@ const DATA = {
   }
 };
 
+/* Filled by `scripts/figures.py inline <artifact> figures/`. Do not edit by hand. */
+const FIGS=/*FIGS-BEGIN*/{}/*FIGS-END*/;
+
 /* ===================== presentation ===================== */
-const $=s=>document.querySelector(s), esc=h=>h;
+const $=s=>document.querySelector(s), esc=h=>h,
+  attr=s=>String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+
+/* figures: a cue inside the text (it counts toward the fit), then the figures
+   in the exempt region below it */
+const FTAG={illustration:'Illustration from outside the cited evidence.',drawn:'Drawn for this artifact.'};
+function figsHTML(list,nofig){
+  list=list||[];
+  const cue=list.length?'<div class="figcue">↓ '+list.length+(list.length>1?' figures':' figure')+' below</div>':'';
+  return cue+'<div class="figs" data-fit-exempt'+(list.length?'':' data-nofig="'+attr(nofig||'')+'"')+'>'+
+    list.map(f=>{const src=FIGS[f.img];
+      return '<figure class="fig'+(src?'':' missing')+'" data-from="'+attr(f.from)+'">'+
+        '<button class="figbtn" type="button" aria-label="Enlarge figure">'+
+        (src?'<img src="'+src+'" alt="'+attr(f.alt)+'">':'missing figure: '+attr(f.img))+'</button>'+
+        '<figcaption>'+(FTAG[f.from]?'<span class="ftag">'+FTAG[f.from]+'</span> ':'')+(f.cap||'')+
+        '<span class="cr">'+(f.credit||'')+(f.u?' · <a href="'+attr(f.u)+
+        '" target="_blank" rel="noopener">source ↗</a>':'')+'</span></figcaption></figure>';
+    }).join('')+'</div>';
+}
+const lb=$('#lightbox'), lbSet=src=>{lb.classList.toggle('open',!!src); if(src)$('#lbImg').src=src;};
+document.addEventListener('click',e=>{const b=e.target.closest('.figbtn'), i=b&&b.querySelector('img');
+  if(i){lbSet(i.src);lb.scrollTop=0;}});
+lb.addEventListener('click',e=>{if(e.target.id!=='lbImg')lbSet(null)});
+addEventListener('keydown',e=>{if(e.key==='Escape')lbSet(null)});
 const KEYS=Object.keys(DATA.clusters), HUE={}; KEYS.forEach((k,i)=>HUE[k]='--k'+((i%4)+1));
 document.title=DATA.title; $('#brandT').textContent=DATA.title;
 
@@ -392,6 +470,7 @@ function drawSpine(){
   $('#cav').innerHTML=(n.cav||[]).map(c=>'<div class="caveat'+(c.t==='ours'?' ours':'')+'">'+
     '<span class="tag">'+(c.t==='ours'?'○ ours, unsourced':'◐ read with care')+'</span> — '+c.x+'</div>').join('');
   $('#srcline').innerHTML=n.src?'<b>Evidence behind this link</b>'+n.src:'';
+  $('#sfigs').innerHTML=figsHTML(n.figs,n.nofig);
   $('#sprev').disabled=si===0; $('#snext').disabled=si===DATA.spine.length-1;
   $('#p-spine .body-scroll').scrollTop=0;
 }
@@ -413,7 +492,7 @@ function drawCluster(){
   $('#cbody').innerHTML=(cj===0?'<h2>'+ck+' · '+c.t+'</h2><p class="lead">'+c.lead+'</p>':'')+
     '<div class="sub'+(cj===0?'':' first')+'"><div class="code" style="color:var('+HUE[ck]+')">'+s.c+
     '<span style="color:var(--faint);font-weight:400"> · '+(cj+1)+' of '+c.subs.length+'</span></div>'+
-    '<div class="t">'+s.t+'</div><div class="d">'+s.d+'</div></div>';
+    '<div class="t">'+s.t+'</div><div class="d">'+s.d+'</div></div>'+figsHTML(s.figs,s.nofig);
   $('#cprev').disabled=cj===0; $('#cnext').disabled=cj===c.subs.length-1;
   $('#cbody').scrollTop=0;
 }
@@ -463,7 +542,8 @@ $('#nav').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b
 
 /* ---------------------------------------------------------------------------
    FIT-CHECK CONTRACT. scripts/fit-check.sh iterates this list, calling show()
-   and then measuring every [data-fit] container. Keep it in step with the
+   and then measuring every [data-fit] container up to its [data-fit-exempt]
+   figure region, then counting that screen's figures (1-3, or a nofig reason). Keep it in step with the
    reading surfaces, or the gate silently stops covering them. Source cards are
    deliberately absent: they are browsed, not read.
    --------------------------------------------------------------------------- */

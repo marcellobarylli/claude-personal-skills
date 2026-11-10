@@ -21,6 +21,14 @@
 #   [data-fit] on each container that must fit without scrolling.
 #       Containers WITHOUT the attribute are exempt by design — reference lists are browsed,
 #       not read, and truncating them to fit a screen cuts the nuance that justifies them.
+#   [data-fit-exempt] on the figure region inside a [data-fit] container.
+#       Only the text above it must fit; the reader scrolls to reach the figures.
+#
+# FIGURES. On every screen it also counts figure.fig inside the [data-fit] containers.
+#   FIGURE FAIL when a screen has none (and no data-nofig reason) or more than three, or a
+#   figure is missing its image, alt text, caption or credit, or one image exceeds 300 KB.
+#   A screen with a data-nofig reason is listed as NO FIGURE, which does not fail the gate:
+#   the reason goes to the user instead.
 
 set -u
 ART="${1:?usage: fit-check.sh <artifact.html> [width] [height]}"
@@ -56,10 +64,40 @@ addEventListener('load', function(){
   function vertical(label){
     var bad = [], nodes = d.querySelectorAll('[data-fit]');
     for (var i = 0; i < nodes.length; i++) {
-      var o = nodes[i].scrollHeight - nodes[i].clientHeight;
+      var o, ex = nodes[i].querySelector('[data-fit-exempt]');
+      if (ex) {   // text ends where the figure region starts
+        var top = ex.getBoundingClientRect().top - nodes[i].getBoundingClientRect().top + nodes[i].scrollTop;
+        o = Math.ceil(top - nodes[i].clientHeight);
+      } else o = nodes[i].scrollHeight - nodes[i].clientHeight;
       if (o > 1) bad.push((nodes[i].getAttribute('data-fit') || 'unnamed') + ' +' + o + 'px');
     }
     return bad.length ? 'OVERFLOW ' + label + ': ' + bad.join(', ') : null;
+  }
+
+  var figFails = [], nofig = [], nfig = 0, figBytes = 0;
+  function figures(label){
+    var nodes = d.querySelectorAll('[data-fit]'), figs = [], reason = null;
+    for (var i = 0; i < nodes.length; i++) {
+      if (!nodes[i].offsetParent) continue;   // not on screen
+      figs = figs.concat([].slice.call(nodes[i].querySelectorAll('figure.fig')));
+      var r = nodes[i].querySelector('[data-nofig]');
+      if (r && r.getAttribute('data-nofig')) reason = r.getAttribute('data-nofig');
+    }
+    if (!figs.length) { if (reason) nofig.push(label + ': ' + reason.slice(0, 90));
+                        else figFails.push(label + ' has no figure and no nofig reason'); return; }
+    if (figs.length > 3) figFails.push(label + ' has ' + figs.length + ' figures (max 3)');
+    figs.forEach(function(f, k){
+      var img = f.querySelector('img'), id = label + ' fig ' + (k + 1);
+      nfig++;
+      if (!img) { figFails.push(id + ' image missing'); return; }
+      var kb = Math.round(img.getAttribute('src').length * 0.75 / 1024);
+      figBytes += kb;
+      if (kb > 300) figFails.push(id + ' is ' + kb + ' KB (max 300)');
+      if (!(img.getAttribute('alt') || '').trim()) figFails.push(id + ' no alt text');
+      var cap = f.querySelector('figcaption'), cr = f.querySelector('.cr');
+      if (!cap || (cap.textContent.length - (cr ? cr.textContent.length : 0)) < 20) figFails.push(id + ' no caption');
+      if (!cr || !cr.textContent.trim()) figFails.push(id + ' no credit');
+    });
   }
 
   var screens = w.__fitScreens, fails = [], n = 0;
@@ -69,6 +107,7 @@ addEventListener('load', function(){
       d.body.offsetHeight; n++;
       var bad = vertical(screens[s].name);
       if (bad) fails.push(bad);
+      figures(screens[s].name);
     }
     out.push(n + ' screens measured, ' + (fails.length ? fails.length + ' FAIL' : 'all fit'));
   } else {
@@ -77,6 +116,11 @@ addEventListener('load', function(){
     out.push('1 screen measured, ' + (fails.length ? 'FAIL' : 'fits'));
   }
   for (var k = 0; k < fails.length; k++) out.push('  ' + fails[k]);
+
+  out.push(nfig + ' figures, ' + figBytes + ' KB of images, page ' +
+           Math.round(d.documentElement.outerHTML.length / 1024) + ' KB');
+  for (var q = 0; q < figFails.length; q++) out.push('FIGURE FAIL ' + figFails[q]);
+  for (var q2 = 0; q2 < nofig.length; q2++) out.push('NO FIGURE ' + nofig[q2]);
 
   // horizontal pan: measured per element. documentElement.scrollWidth is useless here,
   // because it never falls below the viewport width.
@@ -130,5 +174,5 @@ if [ -z "$RESULT" ] || [ "$RESULT" = "pending" ]; then
 fi
 printf '%s\n' "$RESULT"
 
-printf '%s' "$RESULT" | grep -qE 'OVERFLOW|UNDER 44pt|EXTERNAL SUBRESOURCES|BLOCKED' && exit 1
+printf '%s' "$RESULT" | grep -qE 'OVERFLOW|UNDER 44pt|EXTERNAL SUBRESOURCES|BLOCKED|FIGURE FAIL' && exit 1
 exit 0

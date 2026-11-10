@@ -5,13 +5,13 @@
   },
   "metadata": {
     "description": "Personal Claude Code skills (codex-critique, round-log, phone-learning-artifact and autonomous-sandbox) synced across machines.",
-    "version": "1.2.0"
+    "version": "1.3.0"
   },
   "plugins": [
     {
       "name": "personal-skills",
       "description": "codex-critique, round-log, phone-learning-artifact and autonomous-sandbox skills.",
-      "version": "1.2.0",
+      "version": "1.3.0",
       "author": {
         "name": "Marcello Barylli"
       },
