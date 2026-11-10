@@ -1,7 +1,7 @@
 # claude-personal-skills
 
 A personal Claude Code plugin marketplace holding skills that aren't tied to any one
-project: `codex-critique` and `round-log`.
+project: `codex-critique`, `round-log`, `phone-learning-artifact` and `autonomous-sandbox`.
 
 ## Install on a new machine
 

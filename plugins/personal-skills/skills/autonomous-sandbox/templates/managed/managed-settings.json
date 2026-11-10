@@ -1,0 +1,9 @@
+{
+  "allowManagedHooksOnly": true,
+  "disableAllHooks": true,
+  "allowManagedMcpServersOnly": true,
+  "allowedMcpServers": [],
+  "disableClaudeAiConnectors": true,
+  "enableAllProjectMcpServers": false,
+  "skipWebFetchPreflight": true
+}

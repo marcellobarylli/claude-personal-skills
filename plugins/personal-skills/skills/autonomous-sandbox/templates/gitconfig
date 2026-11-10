@@ -1,0 +1,5 @@
+[user]
+	name = Autonomous sandbox agent
+	email = agent@sandbox.invalid
+[init]
+	defaultBranch = main
