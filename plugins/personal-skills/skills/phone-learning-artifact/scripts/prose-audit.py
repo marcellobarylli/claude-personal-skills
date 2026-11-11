@@ -15,7 +15,10 @@ Gates (any FAIL exits 1):
                      sentences (labels rendered by code are not prose)
 
 Warnings (listed, no effect on exit code):
-  contrast     reflexive "X, not Y" / "is not X. It is Y" constructions
+  contrast     antithesis: "X, not Y", "not X but Y", "is not X. It is Y",
+               "Y rather than X" (keep it only when X is a claim someone made)
+  tagalong     sentence ending in a trailing "-ing" phrase after a comma
+               (", highlighting its importance")
   stacked      two or more transition joins in one sentence (but, so, or, yet,
                thus, hence, however, which means)
   opener       decorative sentence-initial transition (However, Moreover, ...)
@@ -48,7 +51,11 @@ CONTRAST = [
     r"\bnot\b[^.!?]{1,80}?\.\s+(?:It|They|This|That)\s+(?:is|are|was|were)\b",  # not X. It is Y
     r"\bnot (?:just|merely|only|simply)\b[^.!?]{0,80}\bbut\b",
     r"\bis not (?:a|an|the)\b[^.!?;]{0,60}[,;—]\s*(?:but|it is|it[’']s)\b",
+    r"\bnot (?:a |an |the )?[a-z]+ but (?:a |an |the )?[a-z]+\b",           # not a mirror but a portal
+    r"(?i)\brather than\b",
 ]
+TAGALONG = (r",\s+(?!including\b|according\b|during\b|following\b|regarding\b|concerning\b|nothing\b|something\b|everything\b|anything\b)"
+            r"[a-z]+ing\b[^;:]*[.?!]?[”\"’)]?$")
 JOIN = r"(?:^|[,;:—–]\s*)(but|so|or|yet|thus|hence|however|which means)\b"
 OPENER = r"^(?:However|Moreover|Furthermore|Indeed|Crucially|Importantly|Notably|Thus|Hence|Additionally|Ultimately|Interestingly)\b"
 META = [
@@ -59,6 +66,7 @@ META = [
     "in other words", "at its core", "fundamentally", "genuinely", "precisely the",
     "exactly the", "everybody expects", "everyone expects", "what breaks", "nothing says",
     "it turns out", "the short answer", "the honest answer", "let that sink in",
+    "your instinct", "you're right that", "you’re right that", "are in play", "is in play",
 ]
 STAGED = r"^[A-Z][a-z]+ (?:it|them|this|that|these|those)(?: [a-z]+)?, and (?:you|we) (?:can|will|get|see)\b"
 SURPRISE = r"\b(?:surprisingly|intriguingly|remarkably|strikingly)\b"
@@ -155,7 +163,7 @@ def audit(path):
     passages = html_passages(raw) if is_html else text_passages(raw)
 
     words = dash_uses = bold_total = 0
-    flags = {k: [] for k in ("G2 dash run", "G3 bold", "contrast", "stacked", "opener", "meta",
+    flags = {k: [] for k in ("G2 dash run", "G3 bold", "contrast", "tagalong", "stacked", "opener", "meta",
                              "staged", "long", "semicolon", "exclaim", "italic")}
     surprise = []
     n_sent = 0
@@ -181,6 +189,8 @@ def audit(path):
             low = text.lower()
             if any(re.search(c, text) for c in CONTRAST):
                 flags["contrast"].append(text)
+            if re.search(TAGALONG, text):
+                flags["tagalong"].append(text)
             if len(re.findall(JOIN, low)) >= 2:
                 flags["stacked"].append(text)
             if re.search(OPENER, text):

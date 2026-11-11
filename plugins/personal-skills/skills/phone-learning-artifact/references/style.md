@@ -85,10 +85,56 @@ marks. Words like "surprisingly" appear once or twice per artifact at most.
 **Read it aloud.** "Commas denote a pause in speaking." A sentence you would not say aloud to a colleague is
 not finished.
 
+**No tagalongs.** A tagalong is a clause hung on a sentence that has already made its claim. Its commonest
+form is a trailing "-ing" phrase. Instruction-tuned models use present participial clauses at 2 to 5 times
+the human rate, GPT-4o at 5.3 times, while base models sit near the human rate (Reinhart et al., PNAS 2025,
+https://arxiv.org/abs/2410.16107).
+- If the tagalong carries a new fact, give the fact its own sentence. Chakrabarty, Laban and Wu quote "Sarah
+  froze, realizing it was her high school sweetheart, Alex, whom she hadn't seen in over a decade." The edit
+  they report gives each event a sentence: "Sarah froze. It was Alex, her high school sweetheart. She hadn't
+  seen him in over a decade."
+- If the tagalong asserts significance, cut it. Wikipedia's editors collected ", emphasizing the importance
+  of solidarity and collective action in the fight for justice" from an AI-written revision
+  (https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing). In Chakrabarty et al., a professional writer
+  deleted ", a silent reminder of everything it once meant" without replacement.
+- Wikipedia's watch list for the second kind: highlighting, underscoring, emphasizing, ensuring, reflecting,
+  symbolizing, contributing to, fostering.
+
+**Antithesis only to correct a real claim.** Antithesis names what something is not: "not X but Y", "X, not
+Y", "Y rather than X". Write it only when X is a claim someone actually made, and the reader can see who made
+it. In NLP papers, "rather than" rose from 0.13 to 0.99 per 1000 words between 2019 and 2026, and postposed
+"X, not Y" from 0.05 to 0.20 (Zamaraeva et al., preprint, https://arxiv.org/abs/2610.10092). Asked to remove
+"not X but Y", Claude models rewrote it as "X, not Y". Swapping one form for another fixes nothing. Drop the
+X half and state Y.
+- Wikipedia's editors collected "Kusama's self-portrait is not a mirror but a portal." The fix states what
+  the portrait is.
+- They also collected "Rather than introducing a new decompiler, REA acts as an interface between AI agents
+  and established analysis tools." The fix deletes the opening clause: "REA acts as an interface between AI
+  agents and established analysis tools."
+
+**What professional editors change.** Chakrabarty, Laban and Wu, "Can AI writing be salvaged?" (CHI 2025,
+https://arxiv.org/abs/2409.14509), had professional writers edit 1,057 LLM-written paragraphs. Of the 8,035
+edits, 74% replaced a span, 18% deleted one and 8% inserted text. Readers ranked the writer-edited paragraphs
+first (average rank 1.5 of 3) and the unedited ones last (2.5). The paper's examples are mostly fiction. Six
+of its seven fixes apply to any prose. The seventh, tense inconsistency, is a grammar error.
+- Awkward word choice, 28% of edits: use the plain word. A writer replaced "seemed to amplify" with
+  "amplified".
+- Poor sentence structure, 20%: split a convoluted thought into two sentences (see No tagalongs).
+- Redundant exposition, 18%: delete what the reader can infer.
+- Cliché, 17%: state the literal fact. A writer turned "her mind a whirlpool of restless thoughts" into
+  "unable to sleep".
+- Purple prose: replace the ornament with the direct statement. "Confusion clouded his understanding like
+  the haze hanging over the park" became "he remained confused". This is the paper's LLM edit, and purple
+  prose is the one category where LLM edits did best.
+- Lack of specificity: add the concrete detail. It is the only fix that makes text longer.
+
+The periphrastic punchline in §3 belongs to the cliché and purple-prose family.
+
 ## 3. Habits that break them
 
-These come from earlier artifacts the owner found tiring. Each one is common in generated prose. The fix is
-named in words. There is no rewritten sentence to copy, because the models are in §1.
+These come from earlier artifacts and replies the owner found tiring. Each one is common in generated prose.
+Most fixes are named in words, because the models are in §1. The last four habits carry the owner's own
+rewrite of the sentence. A rewrite shows the fix for that sentence. It is not a model of the voice.
 
 **The hinge dash.** "Agents already exchange artifacts — and nothing says whether an artifact can verify
 itself."
@@ -114,8 +160,8 @@ everybody expects — so it has to be stated precisely, or the comparison proves
 - "Everybody expects" is a straw man, and "not the one…" withholds the point to build suspense.
 - Fix: state the reason.
 
-**The reflexive contrast.** "Adapted, not inherited." "Deployed, not hypothetical." "The gap is not
-narrower elsewhere. It is measured elsewhere."
+**The reflexive antithesis.** "Adapted, not inherited." "Deployed, not hypothetical." "The gap is not
+narrower elsewhere. It is measured elsewhere." The rule and its evidence are in §2.
 - A contrast earns its place when it corrects a claim someone actually made, and the reader needs to know
   which one.
 - As a rhythm it is a tic. Drop the "not" half unless the rejected reading is on the page or in the corpus.
@@ -128,6 +174,34 @@ Keep one.
 
 **Talking about the text.** "It is worth noting", "importantly", "the key point is", "here is the thing",
 "this matters because". Cut the frame and keep the point.
+
+**The echoed predicate.**
+- Not: "A kernel, a type checker or a test runner answers in about a second, and answers about the property
+  you want."
+- Owner's rewrite: "A kernel, a type checker or a test runner answers in about a second about the property you
+  want."
+- The second "answers" repeats the verb to build a cadence. The sentence has one predicate, so it gets one
+  verb.
+
+**The preamble and the validation.**
+- Not: "Two senses of the word are in play, and your instinct is right that they’re not the same."
+- Owner's rewrite: "They are not the same."
+- "Two senses are in play" announces the claim before making it. "Your instinct is right" grades the reader.
+  Neither carries content, so only the claim stays.
+
+**The periphrastic punchline.**
+- Not: "Where it fails you have to verify the assembled whole, which for most domains on that tab is exactly
+  the thing nobody can afford."
+- Owner's rewrite: "Where it fails you have to verify the assembled whole, which is unaffordable for most
+  domains on that tab."
+- "Exactly the thing nobody can afford" spends six words on one adjective and holds it back as a reveal. The
+  scope condition gets pushed into the middle to make room. Use the adjective.
+
+**Narrating the ask.**
+- Not: "Three options, and I’d want your call before editing since this touches claims rather than wording:"
+- Owner's rewrite: "Three options for editing:"
+- The tagalong clause explains why the writer is asking, which the question already shows. "Claims rather than
+  wording" is a contrast nobody raised. Introduce the list and let the options carry the content.
 
 ## 4. Where the rules meet this skill
 
@@ -162,7 +236,8 @@ label: source, figure number, licence.
 - dash rate;
 - dashes in consecutive sentences;
 - bold and italics inside sentences;
-- reflexive "not X, Y" contrasts;
+- antithesis ("not X but Y", "X, not Y", "rather than");
+- trailing "-ing" tagalongs;
 - stacked transitions;
 - intensifiers and talk about the text;
 - long sentences;
