@@ -88,6 +88,7 @@ def _looks_like_code(s):
 def html_passages(raw):
     raw = re.sub(r"<!--.*?-->", " ", raw, flags=re.S)
     raw = re.sub(r"data:[\w/+.-]+;base64,[A-Za-z0-9+/=]+", "DATAURI", raw)   # embedded figures
+    raw = re.sub(r"\{\{[^{}]*\}\}", "", raw)                                    # citation markers
     out = []
     for sc in re.findall(r"<script[^>]*>(.*?)</script>", raw, flags=re.S | re.I):
         sc = _join_js_concat(sc)

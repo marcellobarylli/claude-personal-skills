@@ -92,8 +92,13 @@ Identify these, in order:
   Not every corpus has one. If it does, it is the most valuable thing to keep on screen. If it does not, omit
   the surface rather than invent one.
 - **The clusters.** These are the distinct literatures or themes.
-- **The sources.** List every work, with what it actually claims.
+- **The sources.** List every work, with what it actually claims. Give each one a short id now
+  (`sim2real-softrobot`), and keep it for the life of the artifact.
 - **The gaps.** These are the open questions, plus the claims the corpus itself hedges.
+
+Tag every fact you extract with its source id and locator: `[sim2real-softrobot §III]`. The id has to sit
+next to the fact when you write the sentence (step 4). Attributing a sentence afterwards means guessing which
+source it came from, and the guess goes wrong most often on a paraphrased number.
 
 ### 2. Apply source precedence
 
@@ -108,6 +113,7 @@ critique tables and errata. Build a precedence list from them and treat each ent
 ### 3. Write the evidence cards
 
 This surface usually justifies the artifact. Each source gets one card with these fields:
+- its id from step 1;
 - name;
 - venue and year;
 - what it actually claims;
@@ -126,6 +132,10 @@ filter, each one takes seconds to check.
 
 Harvest them from errata, critique tables, limitations sections, and any place the corpus says "an earlier
 draft wrongly…". Then check that each one reached a card (see *Gates*).
+
+Every source a screen cites needs a card, including sources with no mis-citation trap. Put the numbers and
+quotations the screens cite from a source into its card's claim field, so a reader who follows a citation
+finds them there.
 
 Two rules keep the cards honest:
 
@@ -158,6 +168,16 @@ The short version:
 
 The `forces` field on a spine node attracts the worst habits. Keep it to one plain sentence that names the
 next question or the next claim.
+
+**Cite as you write.** A sentence that rests on a source carries a marker inside its own string, placed before
+the full stop: `{{id}}`, or `{{id|locator}}` with the section, page, table or figure. Copy the id and locator
+from the tagged fact. The marker renders as a numeral that opens the source card, and the screen's evidence
+list is derived from its markers. Every sentence with a number or a quotation needs one. A sentence with a
+number and no source takes `{{nocite|reason}}`, which renders as nothing and is listed by gate 11.
+
+Because the marker is part of the sentence, it moves with the claim through every later revision. Keep one
+rule when you revise: a marker moves with its claim, a deleted claim takes its marker with it, and a new claim
+needs one.
 
 ### 5. Brief, then find or draw the figures
 
@@ -248,6 +268,8 @@ find. Copy it, replace the `DATA` block, and keep the CSS and the interaction co
 `references/architecture.md` explains each surface and what to do when a corpus lacks one.
 
 Content lives in a single `DATA` block separate from presentation, so a re-sync to the sources is a data edit.
+Citations live in the prose strings (step 4). A screen takes `ev:[ids]` only for a source behind the screen as
+a whole. Do not write a free-text source line, because nothing checks it.
 Put the provenance in an HTML comment at the head of the file:
 - which version of the corpus the artifact was built from;
 - the sync rule;
@@ -302,6 +324,17 @@ Content fidelity matters more than rendering. Run every gate and report the numb
     Then look at every figure beside its brief and caption. Check four things: the figure shows the brief's
     relation, it shows nothing the brief leaves out, its `from` label matches where it came from, and its
     labels can be read at 390 px.
+11. **Citation audit.** Run `scripts/cite-audit.py <artifact> --corpus <notes>...`, and add
+    `--against <last published copy>` on every revision. It fails the artifact on four counts:
+    - a source card without a valid, unique id;
+    - a marker or `ev` entry that names no card;
+    - a sentence on an argument or domain screen that carries a number or a quotation and no marker;
+    - a quoted phrase that appears on none of the cards its sentence cites. This is the check that catches a
+      marker pointing to the wrong source.
+
+    It warns on a cited number missing from the cited card, on each card a screen cited before and no longer
+    cites, and on cards no screen cites. Judge each dropped marker: it is either a deleted claim or a lost
+    citation. The exemptions it lists go to the user.
 
 ### Fit check: measure, don't eyeball
 
@@ -338,7 +371,8 @@ mis-citation note to fit a screen loses the nuance that justifies it.
 
 Give the user:
 - the six criteria you built against;
-- the gate numbers, including the prose audit's three rates;
+- the gate numbers, including the prose audit's three rates and the citation audit's counts;
+- every `{{nocite}}` exemption, with its reason;
 - the figure count, which screens have no figure and why, and which figures are not openly licensed;
 - each cited figure that failed its brief and was redrawn, and why it failed;
 - the design moves you refused, and why.
@@ -362,6 +396,8 @@ it would take. Write the report to `references/style.md` as well.
 - `scripts/condensation-audit.py` is gate 8. It finds comparatives whose object was dropped.
 - `scripts/figures.py` finds figure captions in a PDF, renders pages, crops and compresses a figure, and embeds
   every figure into the artifact.
+- `scripts/cite-audit.py` is gate 11. It checks that every sourced sentence carries a marker that resolves to
+  the right card, and with `--against` it lists the markers a revision dropped.
 - `scripts/prose-audit.py` is gate 9. It counts dash rate, dash runs and bold in prose, and lists the softer
   habits.
 - `assets/template.html` is the working skeleton. Replace its `DATA` block.

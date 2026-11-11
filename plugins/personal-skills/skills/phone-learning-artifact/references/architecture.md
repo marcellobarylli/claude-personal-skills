@@ -12,7 +12,8 @@ All prose on every surface follows `style.md`.
 2. [Surface 1: the spine](#2-surface-1-the-spine)
 3. [Surface 2: the clusters](#3-surface-2-the-clusters)
 4. [Figures on the spine and cluster screens](#4-figures-on-the-spine-and-cluster-screens)
-5. [Surface 3: the evidence cards](#5-surface-3-the-evidence-cards)
+5. [Surface 3: the evidence cards](#5-surface-3-the-evidence-cards), and
+   [citations to them](#5a-citations-from-the-reading-screens-to-the-cards)
 6. [Surface 4: what is open](#6-surface-4-what-is-open)
 7. [Interaction rules](#7-interaction-rules)
 8. [Adapting to an awkward corpus](#8-adapting-to-an-awkward-corpus)
@@ -58,7 +59,7 @@ That relation makes it a spine rather than a list. It also shows the reader why 
 Each screen carries four things:
 - the claim;
 - the connecting prose, in full;
-- the sources behind it;
+- the sources behind it, cited inline (§5a);
 - its caveats, inline.
 
 The claim is one flat sentence. The `forces` line is one plain sentence naming the next question or claim,
@@ -122,6 +123,7 @@ a `nofig` reason. A claim that is one or a few exact numbers gets no figure eith
 ## 5. Surface 3: the evidence cards
 
 Each source gets one card, filterable by cluster, with these fields:
+- a stable id, which the prose markers cite (§5a);
 - name;
 - venue and year;
 - what it actually claims;
@@ -165,6 +167,41 @@ level and 25 rightly carried none.
 
 Readers browse cards rather than read them, so a card may be taller than a screen. Cutting a trap note to fit
 is the one place where the layout rule would destroy the content it is meant to serve.
+
+## 5a. Citations from the reading screens to the cards
+
+A reader on an argument or domain screen can tap through to the card behind any sentence.
+
+**The marker lives in the sentence.** A prose string carries `{{id}}` or `{{id|locator}}` where the sentence
+it supports ends. The template renders it as a superscript numeral, which is the card's position in the list.
+The cards show the same numeral, so a reader recognises a source that recurs across screens.
+
+**The evidence list is derived.** Below the text, in the `[data-fit-exempt]` region, each screen lists the
+cards its markers cite, with their locators. `ev:[ids]` adds a source behind the screen as a whole. Nobody
+maintains the list by hand, so it cannot fall out of step with the prose.
+
+**Why the marker survives revision.** The pairing of sentence and source is made once, when the sentence is
+written from a tagged fact. After that it travels inside the string. A rewrite that keeps the claim keeps the
+marker, and a rewrite that drops it shows up in `cite-audit.py --against`. An id-only marker also survives
+reordering the cards, because the numerals are computed at render time.
+
+**Navigation.**
+- A tap on a numeral or an evidence row opens the sources tab with every filter cleared. It scrolls to the
+  card and outlines it.
+- A bar at the top of the sources tab names the screen the reader came from and the locator. A tap on the bar
+  returns to that screen at the same scroll position.
+- Each jump is a history entry, so the phone's back gesture also returns.
+- `#src-<id>` in the URL opens a card directly.
+
+**What the evidence says about this.** Gate 6 is unaffected, because a numeral carries no proposition.
+Hover-for-definition links lowered comprehension (Krenca et al. 2024). Those links hid content behind the
+link, and a numeral hides none. The claim that more links means worse learning rests on a narrative review
+(DeStefano & LeFevre 2007), and a direct test of 3 against 8 links found no effect (Madrid et al. 2009). The
+link is a numeral, so the words of the sentence stay plain text.
+
+**Tap targets.** The numeral keeps `line-height:0` and gets 19px of vertical padding, which gives a 44pt hit
+area without spreading the lines. The fit check's tap-target rule measures it. Side padding of 6px with −5px
+margins widens the hit area without leaving a gap before the full stop.
 
 ## 6. Surface 4: what is open
 

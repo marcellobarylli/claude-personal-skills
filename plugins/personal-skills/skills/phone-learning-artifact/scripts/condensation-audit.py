@@ -34,6 +34,7 @@ def artifact_prose(path):
     raw = Path(path).read_text(encoding="utf-8", errors="replace")
     raw = re.sub(r"<!--.*?-->", " ", raw, flags=re.S)
     raw = re.sub(r"data:[\w/+.-]+;base64,[A-Za-z0-9+/=]+", "DATAURI", raw)   # embedded figures
+    raw = re.sub(r"\{\{[^{}]*\}\}", "", raw)                                    # citation markers
     out = []
     scripts = re.findall(r"<script[^>]*>(.*?)</script>", raw, flags=re.S | re.I)
     for sc in scripts:
