@@ -25,8 +25,10 @@
 #       Only the text above it must fit; the reader scrolls to reach the figures.
 #
 # FIGURES. On every screen it also counts figure.fig inside the [data-fit] containers.
-#   FIGURE FAIL when a screen has none (and no data-nofig reason) or more than three, or a
-#   figure is missing its image, alt text, caption or credit, or one image exceeds 300 KB.
+#   FIGURE FAIL when a screen has none (and no data-nofig reason) or more than two, or a
+#   figure is missing its image, alt text, caption or credit, or one image exceeds 300 KB,
+#   or a figure has no brief (empty data-rel or data-form, or a data-kind outside KINDS,
+#   which mirrors references/visuals.md; 'value' never takes a figure).
 #   A screen with a data-nofig reason is listed as NO FIGURE, which does not fail the gate:
 #   the reason goes to the user instead.
 
@@ -75,6 +77,9 @@ addEventListener('load', function(){
   }
 
   var figFails = [], nofig = [], nfig = 0, figBytes = 0;
+  // Mirrors the kind columns of references/visuals.md §2-3. Keep them in step.
+  var KINDS = ['comparison', 'interval', 'pooled', 'trend', 'distribution', 'share', 'spread',
+               'process', 'structure', 'taxonomy', 'contrast', 'spatial'];
   function figures(label){
     var nodes = d.querySelectorAll('[data-fit]'), figs = [], reason = null;
     for (var i = 0; i < nodes.length; i++) {
@@ -85,10 +90,15 @@ addEventListener('load', function(){
     }
     if (!figs.length) { if (reason) nofig.push(label + ': ' + reason.slice(0, 90));
                         else figFails.push(label + ' has no figure and no nofig reason'); return; }
-    if (figs.length > 3) figFails.push(label + ' has ' + figs.length + ' figures (max 3)');
+    if (figs.length > 2) figFails.push(label + ' has ' + figs.length + ' figures (max 2)');
     figs.forEach(function(f, k){
       var img = f.querySelector('img'), id = label + ' fig ' + (k + 1);
       nfig++;
+      var kind = f.getAttribute('data-kind') || '';
+      if (!(f.getAttribute('data-rel') || '').trim() || !(f.getAttribute('data-form') || '').trim())
+        figFails.push(id + ' no brief (rel and form)');
+      if (kind === 'value') figFails.push(id + ' has a value brief: state the number in the text instead');
+      else if (KINDS.indexOf(kind) < 0) figFails.push(id + ' brief kind "' + kind + '" is not in visuals.md');
       if (!img) { figFails.push(id + ' image missing'); return; }
       var kb = Math.round(img.getAttribute('src').length * 0.75 / 1024);
       figBytes += kb;

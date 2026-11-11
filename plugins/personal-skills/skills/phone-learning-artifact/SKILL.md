@@ -1,6 +1,6 @@
 ---
 name: phone-learning-artifact
-description: Turn the findings of a meta-analysis, systematic review, literature survey, or any connected body of research into a phone-readable learning artifact. The output is one self-contained HTML file built only on the instructional-design evidence that replicates, written in plain prose to McCarthy's science-writing rules, and illustrated on every argument and domain screen with the most representative figure from the evidence. Use whenever someone wants research, a literature review, a reading list, a survey, study findings, or a dense technical document made readable on a phone, turned into a revision aid, or "easier to absorb". Use it especially when they ask which design choices improve comprehension, because most popular answers (segmenting, pre-training, progressive disclosure, optimal line length, pretesting prompts) do not survive meta-analysis and this skill carries the corrected list.
+description: Turn the findings of a meta-analysis, systematic review, literature survey, or any connected body of research into a phone-readable learning artifact. The output is one self-contained HTML file built only on the instructional-design evidence that replicates, written in plain prose to McCarthy's science-writing rules, and illustrated on every argument and domain screen with one figure whose form is chosen, from the evidence on visual learning, to show that screen's claim. Use whenever someone wants research, a literature review, a reading list, a survey, study findings, or a dense technical document made readable on a phone, turned into a revision aid, or "easier to absorb". Use it especially when they ask which design choices improve comprehension, because most popular answers (segmenting, pre-training, progressive disclosure, optimal line length, pretesting prompts) do not survive meta-analysis and this skill carries the corrected list.
 ---
 
 # Phone learning artifact
@@ -38,7 +38,7 @@ design decision to the user, and quote the independent effect size rather than t
 | 1 | No reading unit requires scrolling or panning | One conceptual unit per screen. The text of a screen fits without scrolling, and its figures sit below the text. This is the only layout rule with real evidence. It is a pass/fail gate you measure (see *Fit check*). |
 | 2 | Cut extraneous material | Strip the apparatus: project bookkeeping, "still to do", revision tables, decoration. This is the best-evidenced lever, and it only removes. Applied to sentences, it is McCarthy's first rule. |
 | 3 | Signal structure | The reader can always see where they are in the argument. |
-| 4 | Diagrams alongside prose, not instead of it | Keep the connecting prose and add the figure. Every argument and domain screen carries one to three figures that show its claim (see step 5). The evidence is for adding a graphic, never for replacing text with one. |
+| 4 | Diagrams alongside prose, not instead of it | Keep the connecting prose and add the figure. Every argument and domain screen carries one figure that shows its claim, chosen against a brief written before any figure is retrieved (see step 5). The evidence is for adding a graphic, never for replacing text with one. |
 | 5 | A compact table can beat informationally matched prose | Render the corpus's core distinction as a table. |
 | 6 | Remove time pressure and never frame it as preliminary | No reading-time estimate, no completion bar, no "quick summary" framing. This is the largest lever, and it is not a layout decision. |
 
@@ -159,27 +159,40 @@ The short version:
 The `forces` field on a spine node attracts the worst habits. Keep it to one plain sentence that names the
 next question or the next claim.
 
-### 5. Find the figures
+### 5. Brief, then find or draw the figures
 
-Every spine node and every cluster subsection gets one to three figures. The figures sit below the text on
-their screen. The text must still fit one screen (gate 5), so the reader scrolls only to reach the figures.
+Every spine node and every cluster subsection gets one figure. A second figure is allowed only when it shows
+a different relation, with its own brief. The figures sit below the text on their screen. The text must still
+fit one screen (gate 5), so the reader scrolls only to reach the figures.
 
 The evidence supports this with one condition. Adding a graphic to text is the largest media effect in the
 multimedia corpus (Text+Diagrams *g* = 0.45). An image that is only on topic is a seductive detail, and
 seductive details cost *g* ≈ −0.33 to −0.41. So a figure earns its place only by showing what the text claims.
+A third representation adds little (*g* ≈ 0.12), which is why the default is one.
 
-**Choose the most representative figure.** Prefer, in this order:
-1. the figure that shows the result the screen claims, such as the effect plot or the forest plot;
-2. the figure that shows the mechanism or structure the claim is about;
-3. the source's overview figure.
+**Write the brief before looking at any figure.** The brief names the one relation the figure must make
+visible, the kind of claim and the form. `references/visuals.md` maps each kind of claim to the form the
+evidence supports, quantitative (comparison, interval, trend, share) and qualitative (process, structure,
+spatial layout). Writing the brief first keeps the choice from being anchored on whatever figures the sources
+happen to contain.
+- Give each screen to a subagent with a fresh context, and run the screens in parallel. It gets the screen's
+  text, the numbers its sources give and `visuals.md`, and no candidate figure. The prompt is in `visuals.md`
+  §1. Without a subagent tool, write every brief yourself before retrieving anything.
+- Do not prompt the subagent as an expert in visual learning. A persona brings the model's priors, and those
+  include the claims the skill refuses (learning styles, "visual learners", any picture helps). The expertise
+  is the table in `visuals.md`.
+- A claim that is one or a few exact numbers gets the brief `kind:'value'` and no figure. The text states the
+  numbers, or a small table does (criterion 5).
 
-A paper's first figure is often a teaser rather than its evidence. Read the captions before choosing
-(`figures.py find`). Crop to the panel that carries the claim, because the other five panels of a six-panel
-figure are extraneous material (criterion 2). Then look at the 390 px preview. If its labels cannot be read,
-crop tighter.
+**Retrieve against the brief.** A candidate meets the brief when it shows the brief's relation in the brief's
+form, its labels can be read at 390 px, and it uses no form `visuals.md` refuses (a mean drawn as a filled bar,
+slices compared across a pie). A paper's first figure is often a teaser rather than its evidence, so read the
+captions before choosing (`figures.py find`). Crop to the panel that carries the relation, because the other
+five panels of a six-panel figure are extraneous material (criterion 2). Then look at the 390 px preview.
 
-**Retrieve in three tiers.** Stop at the first tier that yields a representative figure.
+Three sources can supply the figure. Use the first one that meets the brief.
 1. **From the evidence on that screen** (`from:'evidence'`). Take the figure from a source the screen cites.
+   It wins any tie, because it is the evidence itself.
    - arXiv serves the PDF at `arxiv.org/pdf/<id>`. Its HTML version at `arxiv.org/html/<id>` serves each
      figure as a separate image.
    - PubMed Central and Europe PMC serve the figures of open-access articles as separate images.
@@ -187,15 +200,20 @@ crop tighter.
      `api.semanticscholar.org/graph/v1/paper/DOI:<doi>?fields=openAccessPdf,externalIds`.
    - Evidence that is not a paper (a report, a dataset, documentation, a repository) usually has its own
      charts and diagrams. Use those.
-2. **A public figure from outside the cited evidence** (`from:'illustration'`). Search for an openly licensed
-   figure that shows the same knowledge: Wikimedia Commons, an open-access review of the topic, Our World in
-   Data, an agency report. The template labels it as an illustration, so the reader never takes it for the
-   cited evidence. That label does the job of the "do not cite for" field.
-3. **Drawn for this artifact** (`from:'drawn'`). Write an SVG of the claim's structure or numbers to
-   `figures/<id>.svg`. Use only numbers the sources give.
+2. **Drawn for this artifact** (`from:'drawn'`). Write an SVG of the brief's form to `figures/<id>.svg`. Use
+   only numbers the sources give. When a cited figure exists but fails the brief (a forest plot unreadable at
+   390 px, a mean drawn as a bar), redraw its numbers. The credit then reads "Redrawn from Smith et al. 2020,
+   Fig. 3" and links to the original.
+3. **A public figure from outside the cited evidence** (`from:'illustration'`). Search for an openly licensed
+   figure that meets the brief: Wikimedia Commons, an open-access review of the topic, Our World in Data, an
+   agency report. The template labels it as an illustration, so the reader never takes it for the cited
+   evidence. That label does the job of the "do not cite for" field.
 
-If no tier yields a figure that shows the claim, give the screen `figs:[]` and a `nofig` reason, and tell the
-user. Never meet the count with a decorative image.
+For a quantitative brief, drawing comes before searching, because an outside chart plots other data. For a
+qualitative brief, take whichever of tiers 2 and 3 meets the brief better.
+
+If nothing meets the brief, give the screen `figs:[]` and a `nofig` reason that names the brief's relation, and
+tell the user. A `value` brief's reason begins "value:". Never fill the slot with a decorative image.
 
 **Write the caption to `references/style.md`.** The caption says where to look and what that part shows
 about the claim. It adds no proposition the text lacks, because the text must read completely without the
@@ -275,12 +293,15 @@ Content fidelity matters more than rendering. Run every gate and report the numb
    apply the cut test from `references/style.md`. The script is a floor, and passing it does not make the
    prose good.
 10. **Figure audit.** `scripts/fit-check.sh` counts the figures on every argument and domain screen.
-    - It fails a screen with no figure and no `nofig` reason, and a screen with more than three.
+    - It fails a screen with no figure and no `nofig` reason, and a screen with more than two.
     - It fails a figure without an image, alt text, caption or credit, and an image over 300 KB.
+    - It fails a figure without a brief: an empty `rel` or `form`, or a `kind` that `visuals.md` does not list.
+      A `value` brief on a figure fails too, because a value gets no figure.
     - It lists each `nofig` screen without failing, because that reason goes to the user.
 
-    Then look at every figure beside its caption. Check three things: the figure shows what the caption
-    says, its `from` label matches where it came from, and its labels can be read at 390 px.
+    Then look at every figure beside its brief and caption. Check four things: the figure shows the brief's
+    relation, it shows nothing the brief leaves out, its `from` label matches where it came from, and its
+    labels can be read at 390 px.
 
 ### Fit check: measure, don't eyeball
 
@@ -319,6 +340,7 @@ Give the user:
 - the six criteria you built against;
 - the gate numbers, including the prose audit's three rates;
 - the figure count, which screens have no figure and why, and which figures are not openly licensed;
+- each cited figure that failed its brief and was redrawn, and why it failed;
 - the design moves you refused, and why.
 
 The refusals are often the most useful part, because they are what the user would otherwise ask you to add.
@@ -332,6 +354,8 @@ it would take. Write the report to `references/style.md` as well.
   what each study measured, and what must not be claimed. Read it before justifying a design choice.
 - `references/architecture.md` describes the surfaces in detail. It covers adapting them to a corpus without a
   spine or an anchor vocabulary, and the interaction rules.
+- `references/visuals.md` maps each kind of claim to its visual form, with the evidence strength of each rule.
+  It also holds the brief prompt. Read it before writing a brief.
 - `references/style.md` holds the prose rules, the approved models and the habits to avoid. Read it before
   writing.
 - `scripts/fit-check.sh` is the viewport-accurate overflow harness. It also runs the figure audit (gate 10).

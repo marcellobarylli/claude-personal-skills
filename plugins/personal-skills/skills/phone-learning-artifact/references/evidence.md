@@ -79,8 +79,9 @@ The effect is modest and real. It covers headings, position indicators and expli
 The multimedia principle tests adding a graphic to text. It never tests replacing text with one, so an
 instinct to "turn the prose into a diagram" inverts the finding.
 
-**Applied to retrieved figures.** This finding is why every argument and domain screen carries one to three
-figures. Two limits come with it.
+**Applied to retrieved figures.** This finding is why every argument and domain screen carries a figure.
+`visuals.md` holds the evidence for which form that figure takes and why the default is one figure. Two limits
+come with it.
 - The graphics in the multimedia corpus depict the content of the text. A figure that is only on topic (a
   photo of the lab, a logo, a stock image) is a seductive detail, which costs *g* ≈ −0.33 to −0.41 (criterion
   2). Relevance is the condition, so a screen without a representative figure gets none.

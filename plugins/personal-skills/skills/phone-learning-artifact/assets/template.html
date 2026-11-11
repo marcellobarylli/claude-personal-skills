@@ -43,12 +43,14 @@
   criterion 3 — supported). It is NOT a completion or time-remaining cue, which
   criterion 6 excludes. Keep that distinction if you edit it.
 
-  FIGURES. Every spine node and every cluster subsection carries 1-3 figures
-  (criterion 4: Text+Diagrams g = 0.45). They sit BELOW the text, in the
-  [data-fit-exempt] region: the text must still fit one screen, and the reader
-  scrolls only to reach the figures. A figure must show what the text claims.
+  FIGURES. Every spine node and every cluster subsection carries one figure,
+  and a second only when it shows a different relation (criterion 4:
+  Text+Diagrams g = 0.45). They sit BELOW the text, in the [data-fit-exempt]
+  region: the text must still fit one screen, and the reader scrolls only to
+  reach the figures. Each figure carries the brief it was chosen against
+  (brief:{rel,kind,form}, written before retrieval; see references/visuals.md).
   A merely topical image is a seductive detail (g = -0.33 to -0.41), so a
-  panel with no representative figure gets nofig:'<reason>', not decoration.
+  panel where nothing meets the brief gets nofig:'<reason>', not decoration.
   Images live in figures/ and are embedded by `scripts/figures.py inline`,
   which fills the FIGS block. Never paste base64 by hand.
   <List each figure's licence here, and flag any that is not openly licensed
@@ -354,11 +356,16 @@ const DATA = {
              'the evidence supports diagrams alongside prose and never instead of it.',
      forces:'The next question or the next claim, in one plain sentence.',
      src:'Cluster references that feed this link',
-     /* 1-3 per node. from: 'evidence' (a figure from a source behind this link),
-        'illustration' (a public figure from outside the cited evidence) or
-        'drawn' (made for this artifact from the sources' own numbers).
+     /* One per node; a second only for a different relation, with its own brief.
+        brief: written BEFORE retrieval from references/visuals.md. rel = the one
+        relation to see; kind = a kind from visuals.md §2-3; form = form, encodings,
+        what it leaves out. from: 'evidence' (a figure from a source behind this
+        link), 'drawn' (made for this artifact from the sources' own numbers) or
+        'illustration' (a public figure from outside the cited evidence).
         cap names what to look at and how it bears on the claim. */
      figs:[{img:'example-fig', from:'evidence',
+            brief:{rel:'The left pair of bars differs and the right pair does not.', kind:'comparison',
+                   form:'Bars on one aligned axis, compared pairs adjacent; other conditions left out.'},
             alt:'What the figure depicts, for a reader who cannot see it.',
             cap:'Where to look and what it shows. The left pair of bars is the claim above.',
             credit:'Author et al. Year, Fig. 3b · CC BY 4.0', u:'https://example.org/'}]},
@@ -368,16 +375,20 @@ const DATA = {
      cav:[{t:'ours', x:'An inference of the author’s that appears in no cited source. ' +
              'Render caveats WITH the claim, never behind a tap.'}],
      src:'Cluster references',
-     /* Only when no representative figure exists after all three tiers. The
-        fit check reports it; the reason goes to the user. */
-     figs:[], nofig:'Why no figure shows this claim, and what was searched.'}
+     /* Only when nothing meets the brief after all three sources, or the brief's
+        kind is 'value' (reason begins "value:"). The fit check reports it; the
+        reason goes to the user. */
+     figs:[], nofig:'The brief\'s relation, why nothing meets it, and what was searched.'}
   ],
 
   /* Paged by SUBSECTION, not by cluster: whole clusters overflow the fit gate. */
   clusters: {
     A: {t:'First literature', lead:'One or two lines on what this cluster covers.',
         subs:[{c:'A1', t:'A subsection', d:'What it establishes, at the level of structure.',
-               figs:[{img:'example-fig', from:'illustration', alt:'Alt text.',
+               figs:[{img:'example-fig', from:'illustration',
+                      brief:{rel:'Each stage feeds the next.', kind:'process',
+                             form:'Static flow diagram, numbered nodes, labelled arrows, top to bottom.'},
+                      alt:'Alt text.',
                       cap:'What this shows and which part of the subsection it supports.',
                       credit:'Wikimedia Commons, Name · CC BY-SA 4.0', u:'https://example.org/'}]},
               {c:'A2', t:'Another', d:'Keep each to roughly one screen.', figs:[], nofig:'Reason.'}]},
@@ -422,8 +433,9 @@ function figsHTML(list,nofig){
   list=list||[];
   const cue=list.length?'<div class="figcue">↓ '+list.length+(list.length>1?' figures':' figure')+' below</div>':'';
   return cue+'<div class="figs" data-fit-exempt'+(list.length?'':' data-nofig="'+attr(nofig||'')+'"')+'>'+
-    list.map(f=>{const src=FIGS[f.img];
-      return '<figure class="fig'+(src?'':' missing')+'" data-from="'+attr(f.from)+'">'+
+    list.map(f=>{const src=FIGS[f.img],b=f.brief||{};
+      return '<figure class="fig'+(src?'':' missing')+'" data-from="'+attr(f.from)+
+        '" data-rel="'+attr(b.rel||'')+'" data-kind="'+attr(b.kind||'')+'" data-form="'+attr(b.form||'')+'">'+
         '<button class="figbtn" type="button" aria-label="Enlarge figure">'+
         (src?'<img src="'+src+'" alt="'+attr(f.alt)+'">':'missing figure: '+attr(f.img))+'</button>'+
         '<figcaption>'+(FTAG[f.from]?'<span class="ftag">'+FTAG[f.from]+'</span> ':'')+(f.cap||'')+
@@ -543,7 +555,7 @@ $('#nav').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b
 /* ---------------------------------------------------------------------------
    FIT-CHECK CONTRACT. scripts/fit-check.sh iterates this list, calling show()
    and then measuring every [data-fit] container up to its [data-fit-exempt]
-   figure region, then counting that screen's figures (1-3, or a nofig reason). Keep it in step with the
+   figure region, then counting that screen's figures (1-2 with briefs, or a nofig reason). Keep it in step with the
    reading surfaces, or the gate silently stops covering them. Source cards are
    deliberately absent: they are browsed, not read.
    --------------------------------------------------------------------------- */

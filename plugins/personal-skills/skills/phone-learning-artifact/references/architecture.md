@@ -85,8 +85,9 @@ substance. Show the cluster's lead only on its first subsection, so it does not 
 
 ## 4. Figures on the spine and cluster screens
 
-Every spine node and every cluster subsection carries one to three figures. SKILL.md step 5 covers choosing
-and retrieving them. This section covers how they sit on the screen.
+Every spine node and every cluster subsection carries one figure, and a second only when it shows a different
+relation. SKILL.md step 5 covers the brief and the retrieval, and `visuals.md` covers the choice of form. This
+section covers how the figures sit on the screen.
 
 **The text fits and the figures follow.** The figures render below the text, inside the screen's scroll
 container, in a `[data-fit-exempt]` region. The fit check measures the text down to that region and ignores
@@ -98,8 +99,12 @@ text lacks, because gate 6 requires a complete text with nothing opened or scrol
 
 **Each figure declares where it came from.** `from:'evidence'` is a figure from a source the screen cites.
 `from:'illustration'` is a public figure from outside the cited evidence, and the template prefixes its
-caption with a label saying so. `from:'drawn'` is an SVG made for the artifact from the sources' own numbers.
-A reader who mistakes an illustration for the evidence has made a mis-citation, so the label is required.
+caption with a label saying so. `from:'drawn'` is an SVG made for the artifact from the sources' own numbers. A drawn figure that redraws a
+cited one credits that figure ("Redrawn from …, Fig. 3"). A reader who mistakes an illustration for the
+evidence has made a mis-citation, so the label is required.
+
+**Each figure carries its brief.** The `brief` object (`rel`, `kind`, `form`) renders as data attributes on the
+`<figure>`, so the reader never sees it. Gate 10 reads it.
 
 **A white frame in both themes.** Paper figures assume a white page. In dark mode, black axis labels would
 otherwise sit on a near-black ground.
@@ -110,8 +115,9 @@ Escape. The figure is already visible before the tap, so this adds pixels and hi
 **Size.** `figures.py prep` keeps each image under 180 KB, and the fit check fails one over 300 KB. Thirty
 figures come to about 5 MB.
 
-**No figure is better than a decorative one.** When no figure shows the claim, the screen carries `figs:[]`
-and a `nofig` reason. The fit check lists it, and the reason goes to the user.
+**No figure is better than a decorative one.** When nothing meets the brief, the screen carries `figs:[]` and
+a `nofig` reason. A claim that is one or a few exact numbers gets no figure either, and its reason begins
+"value:". The fit check lists every such screen, and the reason goes to the user.
 
 ## 5. Surface 3: the evidence cards
 
