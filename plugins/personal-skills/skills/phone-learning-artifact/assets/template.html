@@ -180,8 +180,7 @@ main{flex:1 1 auto;min-height:0;position:relative}
    line height (line-height:0 keeps the superscript from spreading the lines). */
 a.cite{vertical-align:super;font-size:.66em;line-height:0;font-weight:700;border:0;
   padding:19px 6px;margin:0 -5px;color:var(--focus)}
-a.cite+a.cite{margin-left:-3px}
-a.cite+a.cite::before{content:",";color:var(--faint);padding-right:1px}
+.cite-sep{color:var(--faint);font-size:.66em;vertical-align:super;line-height:0}
 .cite.bad{color:#b3261e;font-weight:700}
 /* The evidence list sits below the text in a [data-fit-exempt] region, like the
    figures: it is reference, not reading, so it does not count toward the fit. */
@@ -477,14 +476,21 @@ const $=s=>document.querySelector(s), esc=h=>h,
    linking to card `id`. C() renders one string and records what it cited in
    `used`, so the evidence list is derived from the prose and never kept by hand. */
 const SRC={}; DATA.sources.forEach((s,i)=>{if(s.id)SRC[s.id]={s:s,n:i+1}});
-const MARK=/\{\{([^{}|]+)(?:\|([^{}]*))?\}\}/g;
+const MARK=/\{\{([^{}|]+)(?:\|([^{}]*))?\}\}/g, RUN=/(?:\{\{[^{}]+\}\})+/g;
 function C(h,used){
-  return String(h||'').replace(MARK,(m,id,loc)=>{
-    id=id.trim(); loc=(loc||'').trim();
-    if(id==='nocite')return '';
-    const c=SRC[id]; if(used)used.push([id,loc]);
-    return c?'<a class="cite" href="#src-'+id+'" data-src="'+id+'" data-loc="'+attr(loc)+'" aria-label="Source '+
-      c.n+(loc?', '+attr(loc):'')+'">'+c.n+'</a>':'<span class="cite bad">[?'+attr(id)+']</span>';
+  /* adjacent markers render as one group, "12,14". A CSS a+a rule cannot do
+     this, because sibling selectors ignore the text between two numerals. */
+  return String(h||'').replace(RUN,run=>{
+    const out=[];
+    run.replace(MARK,(m,id,loc)=>{
+      id=id.trim(); loc=(loc||'').trim();
+      if(id==='nocite')return '';
+      const c=SRC[id]; if(used)used.push([id,loc]);
+      out.push(c?'<a class="cite" href="#src-'+id+'" data-src="'+id+'" data-loc="'+attr(loc)+'" aria-label="Source '+
+        c.n+(loc?', '+attr(loc):'')+'">'+c.n+'</a>':'<span class="cite bad">[?'+attr(id)+']</span>');
+      return '';
+    });
+    return out.join('<span class="cite-sep">,</span>');
   });
 }
 function evHTML(used,ev){

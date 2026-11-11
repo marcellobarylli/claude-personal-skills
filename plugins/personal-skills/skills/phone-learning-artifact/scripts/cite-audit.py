@@ -63,6 +63,10 @@ def norm(s):
 def nums(s):
     return {n.replace(",", "").replace("−", "-").lstrip("-") for n in NUM.findall(s)}
 
+def card_nums(s):
+    """Every number on a card, including the second end of a range ("0.53-1.6")."""
+    return {n.replace(",", "") for n in re.findall(r"\d[\d,]*(?:\.\d+)?", s)}
+
 
 def load_data(path):
     raw = Path(path).read_text(encoding="utf-8", errors="replace")
@@ -163,7 +167,7 @@ def audit(path, against=None, corpus=()):
         else:
             ids[cid] = c
     text = {cid: card_text(c) for cid, c in ids.items()}
-    cnums = {cid: nums(t) for cid, t in text.items()}
+    cnums = {cid: card_nums(t) for cid, t in text.items()}
     corp = norm(" ".join(Path(f).read_text(encoding="utf-8", errors="replace") for f in corpus))
 
     n_marks = n_need = n_cited_sent = n_quote_ok = 0
