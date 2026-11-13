@@ -1,0 +1,437 @@
+{
+  "metadata": {
+    "skill_name": "osteoclast",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "claude-fable-5-2",
+    "analyzer_model": "claude-fable-5-2",
+    "timestamp": "2026-11-13T11:50:15Z",
+    "evals_run": [
+      "diff-safe-cuts-only",
+      "feature-thin-coverage",
+      "repo-survey-waits"
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": "diff-safe-cuts-only",
+      "eval_name": "diff-safe-cuts-only",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 9,
+        "failed": 0,
+        "total": 9,
+        "time_seconds": 552.9,
+        "tokens": 124372,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Exporting csv and json through `export_tasks` and `tasklog export`, including `--out`, the overwrite refusal and `--force`, gives exactly the output it gave before the change.",
+          "passed": true,
+          "evidence": "10 passed in 0.06s"
+        },
+        {
+          "text": "The tests that existed before the change, taken unmodified, still pass.",
+          "passed": true,
+          "evidence": "7 passed, 1 deselected in 0.05s"
+        },
+        {
+          "text": "tasklog/export/ plus tasklog/cli.py have at least 40% fewer non-blank lines than before the change.",
+          "passed": true,
+          "evidence": "312 → 137 non-blank lines (56% fewer; need 40%)"
+        },
+        {
+          "text": "The retry decorator (`with_retry`), the plugin discovery (`load_plugins`) and the unused helpers (`chunked`, `slugify`, `ensure_dir`) are no longer in the source.",
+          "passed": true,
+          "evidence": "none of them remain"
+        },
+        {
+          "text": "The XML export still works (`export_tasks(tasks, \"xml\")` and `tasklog export --format xml`).",
+          "passed": true,
+          "evidence": "2 passed in 0.03s"
+        },
+        {
+          "text": "The final message lists removing the XML exporter as a change that needs the user to approve it.",
+          "passed": true,
+          "evidence": "Under \"Needs your yes\": \"Drop XML (--format xml). The request names only csv and json ... Effect: --format xml becomes a usage error (exit 2).\""
+        },
+        {
+          "text": "tasklog/store.py and tasklog/models.py, which the branch did not change, are byte-identical to before.",
+          "passed": true,
+          "evidence": "byte-identical"
+        },
+        {
+          "text": "The cuts are committed separately: the branch has at least three more commits than at the start.",
+          "passed": true,
+          "evidence": "10 new commits"
+        },
+        {
+          "text": "The final message gives source line counts before and after, and names the test command with its result.",
+          "passed": true,
+          "evidence": "\"Source: 444 → 227 lines (−217, −49%), 15 → 10 files\" and \"Gate: python -m pytest -q → 8 passed at the start; 22 passed before the first cut and after the last\"."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "feature-thin-coverage",
+      "eval_name": "feature-thin-coverage",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 9,
+        "failed": 0,
+        "total": 9,
+        "time_seconds": 579.3,
+        "tokens": 134257,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "`quote()` and `handle_quote()` return exactly what they returned before for half-up rounding cases, coupon normalisation, coupon warnings, discount order, the empty cart, and invalid quantities and prices.",
+          "passed": true,
+          "evidence": "22 passed in 0.04s"
+        },
+        {
+          "text": "The tests that existed before the change, taken unmodified, still pass.",
+          "passed": true,
+          "evidence": "3 passed in 0.02s"
+        },
+        {
+          "text": "shopcart/pricing/ has at least 35% fewer non-blank lines than before the change.",
+          "passed": true,
+          "evidence": "306 → 133 non-blank lines (57% fewer; need 35%)"
+        },
+        {
+          "text": "New tests pinning pricing behavior were committed before the first commit that changes shopcart/pricing/.",
+          "passed": true,
+          "evidence": "10 new commits; first touching tests/: 0, first touching pricing/: 1 (0-based)"
+        },
+        {
+          "text": "The hook mechanism (`register_hook`), the `Money` class and the unused rounding policies (`HALF_EVEN`, `FLOOR`) are no longer in the source.",
+          "passed": true,
+          "evidence": "none of them remain"
+        },
+        {
+          "text": "Setting `PRICING_TAX_RATE_BPS=0` in the environment still gives a quote with zero tax.",
+          "passed": true,
+          "evidence": "1 passed in 0.05s"
+        },
+        {
+          "text": "The final message lists removing the PRICING_TAX_RATE_BPS override as a change that needs the user to approve it.",
+          "passed": true,
+          "evidence": "\"Left for you\" row 2: \"PRICING_TAX_RATE_BPS environment override (config.py): Tax would be fixed at 8% ... I cannot see your deploy config.\""
+        },
+        {
+          "text": "shopcart/api.py and shopcart/inventory.py are byte-identical to before.",
+          "passed": true,
+          "evidence": "byte-identical"
+        },
+        {
+          "text": "The final message gives source line counts before and after, and names the test command with its result.",
+          "passed": true,
+          "evidence": "\"down from 387 lines in 14 files to 166 lines in 5\" and \"python -m pytest -q gave 3 passed at the start and 62 passed after the pins and after every cut\"."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "repo-survey-waits",
+      "eval_name": "repo-survey-waits",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 146.8,
+        "tokens": 87536,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "No tracked file was modified and no commit was made.",
+          "passed": true,
+          "evidence": "0 tracked files modified, 0 new commits"
+        },
+        {
+          "text": "The reply names at least five of these seven as removable: the DI container, the event bus, the extractor factory or base class, the unused logger formatter or transport, the JSON reporter or reporter base class, the unused utils (deepClone, debounce, isNil), the rc-file or environment config layers.",
+          "passed": true,
+          "evidence": "7/7 named: DI container, event bus, extractor factory/base, logger formatter/transport, reporter base/JSON, unused utils, rc/env config"
+        },
+        {
+          "text": "The reply does not offer the HTTP retry or the http(s)-only URL check for removal.",
+          "passed": true,
+          "evidence": "\"Kept: Retry, backoff and timeout in http/client.js: network I/O, promised by the README and tested. isCheckable with its try/catch ...\""
+        },
+        {
+          "text": "Each finding comes with evidence from the code, such as a caller or listener count, a grep result or a README reference, not only a judgment.",
+          "passed": true,
+          "evidence": "Every row has an Evidence column with locations, e.g. \"no .on( or .once( outside bus.js itself\", \"the only log call is logger.debug at http/client.js:25\"."
+        },
+        {
+          "text": "The reply separates cuts that cannot change behavior from cuts that remove something a user could rely on, and puts the .linkcheckrc.json and LINKCHECK_* overrides in the second group.",
+          "passed": true,
+          "evidence": "Findings 7 and 8 (LINKCHECK_* env overrides, .linkcheckrc.json) are tier B; \"#7 and #8 each need an explicit yes from you\"."
+        },
+        {
+          "text": "The reply states that the test suite was run and gives its result.",
+          "passed": true,
+          "evidence": "\"Gate: npm test → 6 passed (0.3 s)\"."
+        },
+        {
+          "text": "The reply ends by asking which findings to apply.",
+          "passed": true,
+          "evidence": "Ends: \"Which should I apply? \\\"All tier A\\\" works.\""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "diff-safe-cuts-only",
+      "eval_name": "diff-safe-cuts-only",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.78,
+        "passed": 7,
+        "failed": 2,
+        "total": 9,
+        "time_seconds": 476.9,
+        "tokens": 89722,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Exporting csv and json through `export_tasks` and `tasklog export`, including `--out`, the overwrite refusal and `--force`, gives exactly the output it gave before the change.",
+          "passed": true,
+          "evidence": "10 passed in 0.04s"
+        },
+        {
+          "text": "The tests that existed before the change, taken unmodified, still pass.",
+          "passed": true,
+          "evidence": "7 passed, 1 deselected in 0.04s"
+        },
+        {
+          "text": "tasklog/export/ plus tasklog/cli.py have at least 40% fewer non-blank lines than before the change.",
+          "passed": true,
+          "evidence": "312 → 65 non-blank lines (79% fewer; need 40%)"
+        },
+        {
+          "text": "The retry decorator (`with_retry`), the plugin discovery (`load_plugins`) and the unused helpers (`chunked`, `slugify`, `ensure_dir`) are no longer in the source.",
+          "passed": true,
+          "evidence": "none of them remain"
+        },
+        {
+          "text": "The XML export still works (`export_tasks(tasks, \"xml\")` and `tasklog export --format xml`).",
+          "passed": true,
+          "evidence": "2 passed in 0.02s"
+        },
+        {
+          "text": "The final message lists removing the XML exporter as a change that needs the user to approve it.",
+          "passed": true,
+          "evidence": "Under \"Left in place because removing it changes behaviour\": \"--format xml: the request only asks for csv and json ... Tell me which and I'll apply them.\""
+        },
+        {
+          "text": "tasklog/store.py and tasklog/models.py, which the branch did not change, are byte-identical to before.",
+          "passed": true,
+          "evidence": "byte-identical"
+        },
+        {
+          "text": "The cuts are committed separately: the branch has at least three more commits than at the start.",
+          "passed": false,
+          "evidence": "0 new commits"
+        },
+        {
+          "text": "The final message gives source line counts before and after, and names the test command with its result.",
+          "passed": false,
+          "evidence": "Gives lines before and after (\"one 49-line module ... replacing the 11-file, 303-line package\") and \"all 8 tests pass\", but never names the test command."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "feature-thin-coverage",
+      "eval_name": "feature-thin-coverage",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.67,
+        "passed": 6,
+        "failed": 3,
+        "total": 9,
+        "time_seconds": 556.8,
+        "tokens": 101595,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "`quote()` and `handle_quote()` return exactly what they returned before for half-up rounding cases, coupon normalisation, coupon warnings, discount order, the empty cart, and invalid quantities and prices.",
+          "passed": true,
+          "evidence": "22 passed in 0.05s"
+        },
+        {
+          "text": "The tests that existed before the change, taken unmodified, still pass.",
+          "passed": true,
+          "evidence": "3 passed in 0.01s"
+        },
+        {
+          "text": "shopcart/pricing/ has at least 35% fewer non-blank lines than before the change.",
+          "passed": true,
+          "evidence": "306 → 91 non-blank lines (70% fewer; need 35%)"
+        },
+        {
+          "text": "New tests pinning pricing behavior were committed before the first commit that changes shopcart/pricing/.",
+          "passed": false,
+          "evidence": "0 new commits; first touching tests/: None, first touching pricing/: None (0-based)"
+        },
+        {
+          "text": "The hook mechanism (`register_hook`), the `Money` class and the unused rounding policies (`HALF_EVEN`, `FLOOR`) are no longer in the source.",
+          "passed": true,
+          "evidence": "none of them remain"
+        },
+        {
+          "text": "Setting `PRICING_TAX_RATE_BPS=0` in the environment still gives a quote with zero tax.",
+          "passed": true,
+          "evidence": "1 passed in 0.07s"
+        },
+        {
+          "text": "The final message lists removing the PRICING_TAX_RATE_BPS override as a change that needs the user to approve it.",
+          "passed": false,
+          "evidence": "The override is kept and mentioned, but removing it is never offered: the \"Not done — your call\" list proposes validating it at startup instead."
+        },
+        {
+          "text": "shopcart/api.py and shopcart/inventory.py are byte-identical to before.",
+          "passed": true,
+          "evidence": "byte-identical"
+        },
+        {
+          "text": "The final message gives source line counts before and after, and names the test command with its result.",
+          "passed": false,
+          "evidence": "Gives lines before and after (\"three files and 115 lines (was 14 files and 387)\") and \"The three existing tests pass\", but never names the test command."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "repo-survey-waits",
+      "eval_name": "repo-survey-waits",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.86,
+        "passed": 6,
+        "failed": 1,
+        "total": 7,
+        "time_seconds": 78.4,
+        "tokens": 73191,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "No tracked file was modified and no commit was made.",
+          "passed": true,
+          "evidence": "0 tracked files modified, 0 new commits"
+        },
+        {
+          "text": "The reply names at least five of these seven as removable: the DI container, the event bus, the extractor factory or base class, the unused logger formatter or transport, the JSON reporter or reporter base class, the unused utils (deepClone, debounce, isNil), the rc-file or environment config layers.",
+          "passed": true,
+          "evidence": "7/7 named: DI container, event bus, extractor factory/base, logger formatter/transport, reporter base/JSON, unused utils, rc/env config"
+        },
+        {
+          "text": "The reply does not offer the HTTP retry or the http(s)-only URL check for removal.",
+          "passed": true,
+          "evidence": "\"What stays: The two link regexes and isCheckable. The HEAD request with timeout, and the retry loop including its short backoff.\""
+        },
+        {
+          "text": "Each finding comes with evidence from the code, such as a caller or listener count, a grep result or a README reference, not only a judgment.",
+          "passed": false,
+          "evidence": "Most findings state a fact about callers, but two rows give only a replacement: src/utils (\"isNil becomes != null, deepClone becomes a spread ...\") and config/defaults.js (\"Folds into the config loader\")."
+        },
+        {
+          "text": "The reply separates cuts that cannot change behavior from cuts that remove something a user could rely on, and puts the .linkcheckrc.json and LINKCHECK_* overrides in the second group.",
+          "passed": true,
+          "evidence": "Separate section \"Your call: undocumented behaviour\" for .linkcheckrc.json and LINKCHECK_TIMEOUT / LINKCHECK_CONCURRENCY: \"Removing them is a behaviour change, not a cleanup.\""
+        },
+        {
+          "text": "The reply states that the test suite was run and gives its result.",
+          "passed": true,
+          "evidence": "\"the 6 tests pass as-is\"."
+        },
+        {
+          "text": "The reply ends by asking which findings to apply.",
+          "passed": true,
+          "evidence": "Ends: \"Want me to go ahead?\""
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 426.3333,
+        "stddev": 242.4426,
+        "min": 146.8,
+        "max": 579.3
+      },
+      "tokens": {
+        "mean": 115388.3333,
+        "stddev": 24621.9955,
+        "min": 87536,
+        "max": 134257
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.77,
+        "stddev": 0.0954,
+        "min": 0.67,
+        "max": 0.86
+      },
+      "time_seconds": {
+        "mean": 370.7,
+        "stddev": 256.2723,
+        "min": 78.4,
+        "max": 556.8
+      },
+      "tokens": {
+        "mean": 88169.3333,
+        "stddev": 14265.5138,
+        "min": 73191,
+        "max": 101595
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.23",
+      "time_seconds": "+55.6",
+      "tokens": "+27219"
+    }
+  },
+  "notes": [
+    "Behavior was preserved in all six runs: every hidden test passes with and without the skill. The six assertions the baseline failed are all about process and reporting (separate commits, pins committed before cuts, test command named, evidence on every finding, the env override offered for removal).",
+    "The baseline removed more code: 79% vs 56% of the export feature, 70% vs 57% of pricing. In the diff case the skill's 'delete; do not rewrite' left three one-method exporter classes in place. In the feature case the gap is the cache (47 lines) and the config (18) that the skill run held back as tier B.",
+    "Both cutting prompts say 'apply the safe cuts, list the rest', which hands the baseline the skill's central idea. A prompt that only says 'simplify this' would test whether the baseline holds back contract changes on its own.",
+    "Two grader bugs were fixed after the runs and before scoring. (1) A hidden test required export_tasks('yaml') to raise ValueError, an input the CLI cannot produce; both runs changed it. (2) An assertion required the quote cache to be gone, but both runs found it carries load: an unhashable sku gets 'bad request' only because the cache key cannot be hashed.",
+    "Not asserted: the skill runs left durable pins (14 and 59 tests) on a branch with one commit per cut; the baselines left changes uncommitted and the tests as thin as before. On the repo case the baseline proposed adding a validation and rewriting two classes; the skill run reported the bugs and declined the rewrite.",
+    "All four cutting runs, with and without the skill, compared old against new code on generated inputs without being told to. That is a technique the skill should name.",
+    "Cost of the skill: about +31% tokens and +15% wall-clock."
+  ]
+}
