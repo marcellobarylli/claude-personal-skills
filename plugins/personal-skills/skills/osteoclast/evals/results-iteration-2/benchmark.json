@@ -1,0 +1,425 @@
+{
+  "metadata": {
+    "skill_name": "osteoclast",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "claude-fable-5-2",
+    "analyzer_model": "claude-fable-5-2",
+    "timestamp": "2026-11-13T12:07:55Z",
+    "evals_run": [
+      "diff-safe-cuts-only",
+      "feature-plain-ask-waits",
+      "feature-thin-coverage"
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": "diff-safe-cuts-only",
+      "eval_name": "diff-safe-cuts-only",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 9,
+        "failed": 0,
+        "total": 9,
+        "time_seconds": 941.3,
+        "tokens": 117134,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Exporting csv and json through `export_tasks` and `tasklog export`, including `--out`, the overwrite refusal and `--force`, gives exactly the output it gave before the change.",
+          "passed": true,
+          "evidence": "10 passed in 0.06s"
+        },
+        {
+          "text": "The tests that existed before the change, taken unmodified, still pass.",
+          "passed": true,
+          "evidence": "7 passed, 1 deselected in 0.04s"
+        },
+        {
+          "text": "tasklog/export/ plus tasklog/cli.py have at least 40% fewer non-blank lines than before the change.",
+          "passed": true,
+          "evidence": "312 → 65 non-blank lines (79% fewer; need 40%)"
+        },
+        {
+          "text": "The retry decorator (`with_retry`), the plugin discovery (`load_plugins`) and the unused helpers (`chunked`, `slugify`, `ensure_dir`) are no longer in the source.",
+          "passed": true,
+          "evidence": "none of them remain"
+        },
+        {
+          "text": "The XML export still works (`export_tasks(tasks, \"xml\")` and `tasklog export --format xml`).",
+          "passed": true,
+          "evidence": "2 passed in 0.03s"
+        },
+        {
+          "text": "The final message lists removing the XML exporter as a change that needs the user to approve it.",
+          "passed": true,
+          "evidence": "Under \"Not applied: these change what the tool does\": \"XML format (--format xml). The request asks for csv and json only. Removing it makes --format xml an argparse error\"."
+        },
+        {
+          "text": "tasklog/store.py and tasklog/models.py, which the branch did not change, are byte-identical to before.",
+          "passed": true,
+          "evidence": "byte-identical"
+        },
+        {
+          "text": "The cuts are committed separately: the branch has at least three more commits than at the start.",
+          "passed": true,
+          "evidence": "9 new commits"
+        },
+        {
+          "text": "The final message gives source line counts before and after, and names the test command with its result.",
+          "passed": true,
+          "evidence": "\"Source: 331 → 86 lines (−245, −74%), 11 → 2 files\" and \"Gate: python -m pytest -q → 23 passed before the first cut and after the last\"."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "feature-plain-ask-waits",
+      "eval_name": "feature-plain-ask-waits",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 237.7,
+        "tokens": 99016,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "No tracked file was modified and no commit was made.",
+          "passed": true,
+          "evidence": "0 tracked files modified, 0 new commits"
+        },
+        {
+          "text": "The reply names at least four of these five as removable: the strategy chain, the hook mechanism, the Money wrapper, the unused rounding policies, the engine or context class.",
+          "passed": true,
+          "evidence": "5/5 named: strategy chain, hooks, Money wrapper, rounding policies, engine/context class"
+        },
+        {
+          "text": "The reply puts removing the PRICING_TAX_RATE_BPS override among the changes that need the user to approve them, apart from the cuts that cannot change behavior.",
+          "passed": true,
+          "evidence": "Listed under Kept, apart from the tier A cuts, with removal conditional on the user: \"its docstring says ops set it per deployment, and I can't see your deploy config ... If nothing sets it, tell me and it becomes a constant.\""
+        },
+        {
+          "text": "The reply does not offer the cart validation (invalid quantity, invalid price) for removal.",
+          "passed": true,
+          "evidence": "\"Kept: validate_lines: it checks untrusted input from the web tier.\""
+        },
+        {
+          "text": "The reply says the existing tests are too thin to protect the cuts and that behavior will be pinned with tests before cutting.",
+          "passed": true,
+          "evidence": "\"only three tests exist and none touch bulk, coupons, rounding ties, validation errors or the env override. So first I'd add about a dozen tests through handle_quote that record current behaviour and commit them alone\"."
+        },
+        {
+          "text": "The reply ends by asking which findings to apply.",
+          "passed": true,
+          "evidence": "Ends: \"Which should I apply: all eight, the seven A cuts only, or specific numbers?\""
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "feature-thin-coverage",
+      "eval_name": "feature-thin-coverage",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 9,
+        "failed": 0,
+        "total": 9,
+        "time_seconds": 627.9,
+        "tokens": 147014,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "`quote()` and `handle_quote()` return exactly what they returned before for half-up rounding cases, coupon normalisation, coupon warnings, discount order, the empty cart, and invalid quantities and prices.",
+          "passed": true,
+          "evidence": "22 passed in 0.03s"
+        },
+        {
+          "text": "The tests that existed before the change, taken unmodified, still pass.",
+          "passed": true,
+          "evidence": "3 passed in 0.01s"
+        },
+        {
+          "text": "shopcart/pricing/ has at least 35% fewer non-blank lines than before the change.",
+          "passed": true,
+          "evidence": "306 → 90 non-blank lines (71% fewer; need 35%)"
+        },
+        {
+          "text": "New tests pinning pricing behavior were committed before the first commit that changes shopcart/pricing/.",
+          "passed": true,
+          "evidence": "9 new commits; first touching tests/: 0, first touching pricing/: 1 (0-based)"
+        },
+        {
+          "text": "The hook mechanism (`register_hook`), the `Money` class and the unused rounding policies (`HALF_EVEN`, `FLOOR`) are no longer in the source.",
+          "passed": true,
+          "evidence": "none of them remain"
+        },
+        {
+          "text": "Setting `PRICING_TAX_RATE_BPS=0` in the environment still gives a quote with zero tax.",
+          "passed": true,
+          "evidence": "1 passed in 0.05s"
+        },
+        {
+          "text": "The final message lists removing the PRICING_TAX_RATE_BPS override as a change that needs the user to approve it.",
+          "passed": true,
+          "evidence": "Row B2 under \"Not applied: your call\": \"Remove the PRICING_TAX_RATE_BPS override and fix tax at 8% ... B2 depends on whether any deployment sets the variable, which only you know.\""
+        },
+        {
+          "text": "shopcart/api.py and shopcart/inventory.py are byte-identical to before.",
+          "passed": true,
+          "evidence": "byte-identical"
+        },
+        {
+          "text": "The final message gives source line counts before and after, and names the test command with its result.",
+          "passed": true,
+          "evidence": "\"down from 387 lines in 14 files to 113 lines in 3\" and \"python -m pytest -q gave 3 passed at the start, and 63 passed before the first cut and after every cut\"."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "diff-safe-cuts-only",
+      "eval_name": "diff-safe-cuts-only",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.78,
+        "passed": 7,
+        "failed": 2,
+        "total": 9,
+        "time_seconds": 476.9,
+        "tokens": 89722,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Exporting csv and json through `export_tasks` and `tasklog export`, including `--out`, the overwrite refusal and `--force`, gives exactly the output it gave before the change.",
+          "passed": true,
+          "evidence": "10 passed in 0.04s"
+        },
+        {
+          "text": "The tests that existed before the change, taken unmodified, still pass.",
+          "passed": true,
+          "evidence": "7 passed, 1 deselected in 0.04s"
+        },
+        {
+          "text": "tasklog/export/ plus tasklog/cli.py have at least 40% fewer non-blank lines than before the change.",
+          "passed": true,
+          "evidence": "312 → 65 non-blank lines (79% fewer; need 40%)"
+        },
+        {
+          "text": "The retry decorator (`with_retry`), the plugin discovery (`load_plugins`) and the unused helpers (`chunked`, `slugify`, `ensure_dir`) are no longer in the source.",
+          "passed": true,
+          "evidence": "none of them remain"
+        },
+        {
+          "text": "The XML export still works (`export_tasks(tasks, \"xml\")` and `tasklog export --format xml`).",
+          "passed": true,
+          "evidence": "2 passed in 0.02s"
+        },
+        {
+          "text": "The final message lists removing the XML exporter as a change that needs the user to approve it.",
+          "passed": true,
+          "evidence": "Under \"Left in place because removing it changes behaviour\": \"--format xml: the request only asks for csv and json ... Tell me which and I'll apply them.\""
+        },
+        {
+          "text": "tasklog/store.py and tasklog/models.py, which the branch did not change, are byte-identical to before.",
+          "passed": true,
+          "evidence": "byte-identical"
+        },
+        {
+          "text": "The cuts are committed separately: the branch has at least three more commits than at the start.",
+          "passed": false,
+          "evidence": "0 new commits"
+        },
+        {
+          "text": "The final message gives source line counts before and after, and names the test command with its result.",
+          "passed": false,
+          "evidence": "Gives lines before and after (\"one 49-line module ... replacing the 11-file, 303-line package\") and \"all 8 tests pass\", but never names the test command."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "feature-plain-ask-waits",
+      "eval_name": "feature-plain-ask-waits",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.5,
+        "passed": 3,
+        "failed": 3,
+        "total": 6,
+        "time_seconds": 183.7,
+        "tokens": 84086,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "No tracked file was modified and no commit was made.",
+          "passed": false,
+          "evidence": "16 tracked files modified, 0 new commits"
+        },
+        {
+          "text": "The reply names at least four of these five as removable: the strategy chain, the hook mechanism, the Money wrapper, the unused rounding policies, the engine or context class.",
+          "passed": true,
+          "evidence": "5/5 named: strategy chain, hooks, Money wrapper, rounding policies, engine/context class"
+        },
+        {
+          "text": "The reply puts removing the PRICING_TAX_RATE_BPS override among the changes that need the user to approve them, apart from the cuts that cannot change behavior.",
+          "passed": false,
+          "evidence": "The override is kept (\"still works\") but removing it is never put to the user."
+        },
+        {
+          "text": "The reply does not offer the cart validation (invalid quantity, invalid price) for removal.",
+          "passed": true,
+          "evidence": "\"quote() is now one function ... validate, bulk, coupon, gold, tax\": validation is kept."
+        },
+        {
+          "text": "The reply says the existing tests are too thin to protect the cuts and that behavior will be pinned with tests before cutting.",
+          "passed": true,
+          "evidence": "\"the repo had three tests, none touching bulk or coupons, so I first added tests for every README rule ... and confirmed they passed on the old code.\""
+        },
+        {
+          "text": "The reply ends by asking which findings to apply.",
+          "passed": false,
+          "evidence": "The cuts were already applied, including the cache removal that changes what malformed requests return; the reply ends with a note on where it was saved, not a question."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": "feature-thin-coverage",
+      "eval_name": "feature-thin-coverage",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.67,
+        "passed": 6,
+        "failed": 3,
+        "total": 9,
+        "time_seconds": 556.8,
+        "tokens": 101595,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "`quote()` and `handle_quote()` return exactly what they returned before for half-up rounding cases, coupon normalisation, coupon warnings, discount order, the empty cart, and invalid quantities and prices.",
+          "passed": true,
+          "evidence": "22 passed in 0.05s"
+        },
+        {
+          "text": "The tests that existed before the change, taken unmodified, still pass.",
+          "passed": true,
+          "evidence": "3 passed in 0.01s"
+        },
+        {
+          "text": "shopcart/pricing/ has at least 35% fewer non-blank lines than before the change.",
+          "passed": true,
+          "evidence": "306 → 91 non-blank lines (70% fewer; need 35%)"
+        },
+        {
+          "text": "New tests pinning pricing behavior were committed before the first commit that changes shopcart/pricing/.",
+          "passed": false,
+          "evidence": "0 new commits; first touching tests/: None, first touching pricing/: None (0-based)"
+        },
+        {
+          "text": "The hook mechanism (`register_hook`), the `Money` class and the unused rounding policies (`HALF_EVEN`, `FLOOR`) are no longer in the source.",
+          "passed": true,
+          "evidence": "none of them remain"
+        },
+        {
+          "text": "Setting `PRICING_TAX_RATE_BPS=0` in the environment still gives a quote with zero tax.",
+          "passed": true,
+          "evidence": "1 passed in 0.07s"
+        },
+        {
+          "text": "The final message lists removing the PRICING_TAX_RATE_BPS override as a change that needs the user to approve it.",
+          "passed": false,
+          "evidence": "The override is kept and mentioned, but removing it is never offered: the \"Not done — your call\" list proposes validating it at startup instead."
+        },
+        {
+          "text": "shopcart/api.py and shopcart/inventory.py are byte-identical to before.",
+          "passed": true,
+          "evidence": "byte-identical"
+        },
+        {
+          "text": "The final message gives source line counts before and after, and names the test command with its result.",
+          "passed": false,
+          "evidence": "Gives lines before and after (\"three files and 115 lines (was 14 files and 387)\") and \"The three existing tests pass\", but never names the test command."
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 602.3,
+        "stddev": 352.4979,
+        "min": 237.7,
+        "max": 941.3
+      },
+      "tokens": {
+        "mean": 121054.6667,
+        "stddev": 24238.0016,
+        "min": 99016,
+        "max": 147014
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.65,
+        "stddev": 0.1411,
+        "min": 0.5,
+        "max": 0.78
+      },
+      "time_seconds": {
+        "mean": 405.8,
+        "stddev": 196.4493,
+        "min": 183.7,
+        "max": 556.8
+      },
+      "tokens": {
+        "mean": 91801.0,
+        "stddev": 8937.7263,
+        "min": 84086,
+        "max": 101595
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.35",
+      "time_seconds": "+196.5",
+      "tokens": "+29254"
+    }
+  },
+  "notes": [
+    "Round 2 tests the revised skill (collapse allowed, 'reachable' defined, old-against-new check named). Only the with-skill runs of diff-safe-cuts-only and feature-thin-coverage were repeated; their baselines are copied from round 1, since a baseline does not depend on the skill. repo-survey-waits was not repeated.",
+    "The collapse rule closed the size gap: the skill run now removes 79% of the export feature (was 56%; baseline 79%) and 71% of pricing (was 57%; baseline 70%), still with pins first and one commit per cut.",
+    "New case feature-plain-ask-waits ('simplify it', no mention of safe cuts or approval): the skill run surveyed and waited; the baseline rewrote 16 files in the working tree and removed the cache, which changes what a malformed request returns, then reported it as a decision for the user after the fact.",
+    "The pins are large: 153 and 177 test lines for 86 and 113 source lines. The instruction to pin 'a few cases per behavior' did not shrink them.",
+    "Cost on the two repeated cases: 117k and 147k tokens with the skill vs 90k and 102k without; 10 to 16 minutes vs 8 to 9."
+  ]
+}

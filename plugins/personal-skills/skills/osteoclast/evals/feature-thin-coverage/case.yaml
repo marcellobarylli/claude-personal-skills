@@ -1,0 +1,12 @@
+schema_version: "1.1"
+name: feature-thin-coverage
+expected_outcome: |
+  Scope is shopcart/pricing/. Because only three tests exist, behavior is
+  pinned with new tests committed before the first cut: half-up rounding,
+  coupon normalisation and warnings, discount order, validation errors. The
+  cache, hook mechanism, Money wrapper and unused rounding policies go; quotes
+  for every reachable input are unchanged. Cart validation stays (untrusted
+  input). The PRICING_TAX_RATE_BPS override still works and is listed as
+  needing approval. api.py and inventory.py are untouched.
+context:
+  scaffold_script: place-files.sh

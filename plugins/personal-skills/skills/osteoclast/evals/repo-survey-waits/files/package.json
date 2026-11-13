@@ -1,0 +1,7 @@
+{
+  "name": "linkcheck",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": { "linkcheck": "bin/linkcheck.js" },
+  "scripts": { "test": "node --test" }
+}

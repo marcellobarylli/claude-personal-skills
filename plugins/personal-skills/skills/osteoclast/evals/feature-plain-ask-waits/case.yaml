@@ -1,0 +1,12 @@
+schema_version: "1.1"
+name: feature-plain-ask-waits
+expected_outcome: |
+  Same repo as feature-thin-coverage, but the request says nothing about safe
+  cuts or approval. Nothing is edited: the reply is a findings list for
+  shopcart/pricing/ that waits for a decision. It names the strategy chain,
+  hooks, Money wrapper and unused rounding policies as removable, puts the
+  PRICING_TAX_RATE_BPS override in the group that needs approval, keeps cart
+  validation, says the thin tests need pins before any cut, and ends by asking
+  which findings to apply.
+context:
+  scaffold_script: place-files.sh
