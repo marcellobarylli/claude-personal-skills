@@ -5,13 +5,13 @@
   },
   "metadata": {
     "description": "Personal Claude Code skills (codex-critique, round-log, phone-learning-artifact, autonomous-sandbox and tmux-hygiene) synced across machines.",
-    "version": "1.6.0"
+    "version": "1.6.1"
   },
   "plugins": [
     {
       "name": "personal-skills",
       "description": "codex-critique, round-log, phone-learning-artifact, autonomous-sandbox and tmux-hygiene skills.",
-      "version": "1.6.0",
+      "version": "1.6.1",
       "author": {
         "name": "Marcello Barylli"
       },

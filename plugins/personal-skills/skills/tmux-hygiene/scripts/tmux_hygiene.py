@@ -4,11 +4,15 @@
   report [--json]        memory of the user slice, then every tmux session with
                          age, idle state, memory and description material
   kill NAME [NAME...]    re-check each session, then kill the eligible ones
+  kill-strays PID [...]  re-check each stray process tree, then SIGTERM the eligible ones
   check                  one warning line if non-cache memory is over the soft
                          limit (for a SessionStart hook); silent otherwise
 
 A session is eligible only if it is older than --min-age-hours (default 48) and
-nothing in it is active. Binds no network port.
+nothing in it is active. A stray is a process tree outside every tmux session and
+outside every ssh login (a leftover daemon, for example a Codex broker); it is
+eligible when older than --stray-min-age-hours (default 1) and idle. Binds no
+network port.
 """
 import argparse, glob, json, os, signal, subprocess, sys, time
 
@@ -21,6 +25,10 @@ SOFT_LIMIT_GIB = float(os.environ.get("TMUX_HYGIENE_SOFT_GIB", "4"))
 SHELLS = {"bash", "sh", "zsh", "fish", "dash", "tmux: server"}
 CPU_SAMPLE_S = 3.0
 CPU_BUSY_FRACTION = 0.20  # of one core, summed over the session's processes
+# Per-user infrastructure that is never a stray (matched on the process name).
+INFRA = {"systemd", "(sd-pam)", "dbus-daemon", "pipewire", "pipewire-pulse", "pipewire-media-", "wireplumber",
+         "pulseaudio", "ssh-agent", "gpg-agent", "sshd", "tmux", "tmux: server", "tmux: client"}
+INFRA_PREFIX = ("gvfs", "gnome-keyring", "at-spi", "xdg-", "dconf")
 
 
 # ---------- memory ----------
@@ -257,6 +265,110 @@ def outside_tmux_claudes(sess_list):
     return out, sum(pss(p) for p in out)
 
 
+# ---------- strays: leftover process trees outside tmux and ssh logins ----------
+
+def listening_ports():
+    """Map socket inode -> 'tcp:PORT' for every listening TCP socket."""
+    out = {}
+    for fn, kind in (("/proc/net/tcp", "tcp"), ("/proc/net/tcp6", "tcp")):
+        try:
+            for line in open(fn).read().splitlines()[1:]:
+                f = line.split()
+                if f[3] == "0A":  # LISTEN
+                    out[f[9]] = f"{kind}:{int(f[1].rsplit(':', 1)[1], 16)}"
+        except OSError:
+            pass
+    return out
+
+
+def tree_ports(pids, ports):
+    found = set()
+    for p in pids:
+        try:
+            for fd in os.listdir(f"/proc/{p}/fd"):
+                try:
+                    t = os.readlink(f"/proc/{p}/fd/{fd}")
+                except OSError:
+                    continue
+                if t.startswith("socket:[") and t[8:-1] in ports:
+                    found.add(ports[t[8:-1]])
+        except OSError:
+            pass
+    return sorted(found)
+
+
+def is_infra(v):
+    c = v["comm"]
+    return c in INFRA or c.startswith(INFRA_PREFIX)
+
+
+def stray_roots(procs, kids, in_tmux, mine):
+    """Roots of process trees that no tmux session, ssh login or per-user service owns."""
+    def ancestors(p):
+        seen = []
+        while p in procs and p not in seen:
+            seen.append(p)
+            p = procs[p]["ppid"]
+        return seen
+    roots = []
+    for pid, v in procs.items():
+        if pid in in_tmux or pid in mine or is_infra(v):
+            continue
+        anc = ancestors(procs[pid]["ppid"]) if procs[pid]["ppid"] in procs else []
+        if any(a in in_tmux or a in mine or procs[a]["comm"] in ("sshd", "tmux", "tmux: server") for a in anc):
+            continue  # inside a tmux session, or an interactive ssh login
+        if any(not is_infra(procs[a]) and a != pid for a in anc):
+            continue  # not a root: an ancestor is itself a stray
+        roots.append(pid)
+    return roots
+
+
+def assess_strays(min_age_h):
+    procs = proc_table()
+    kids = children_map(procs)
+    mine = own_ancestors(procs)
+    in_tmux = set()
+    for s in sessions():
+        for pane in s["panes"]:
+            in_tmux.update(tree(pane["pid"], kids))
+    # tmux servers and clients are infrastructure, handled by the session part.
+    roots = stray_roots(procs, kids, in_tmux, mine)
+    ports = listening_ports()
+    uptime = float(open("/proc/uptime").read().split()[0])
+    groups = []
+    for r in roots:
+        pids = tree(r, kids)
+        groups.append({"pid": r, "pids": pids, "start": procs[r]["start"],
+                       "age_h": (uptime - procs[r]["start"] / HZ) / 3600,
+                       "args": procs[r]["args"] or f"[{procs[r]['comm']}]", "comm": procs[r]["comm"],
+                       "parent": procs[procs[r]["ppid"]]["comm"] if procs[r]["ppid"] in procs else "init",
+                       "ports": tree_ports(pids, ports)})
+    before = {g_["pid"]: cpu_ticks(g_["pids"]) for g_ in groups}
+    if groups:
+        time.sleep(CPU_SAMPLE_S)
+    for g_ in groups:
+        procs2 = {p: procs[p] for p in g_["pids"] if p in procs}
+        g_["pss"] = sum(pss(p) for p in g_["pids"])
+        g_["n"] = len(g_["pids"])
+        g_["cpu"] = (cpu_ticks(g_["pids"]) - before[g_["pid"]]) / HZ / CPU_SAMPLE_S
+        try:
+            g_["cwd"] = os.readlink(f"/proc/{g_['pid']}/cwd")
+        except OSError:
+            g_["cwd"] = None
+        busy = []
+        if g_["cpu"] > CPU_BUSY_FRACTION:
+            busy.append(f"using {g_['cpu'] * 100:.0f}% CPU")
+        for p, v in procs2.items():
+            if v["state"] in ("R", "D"):
+                busy.append(f"process {p} in state {v['state']}")
+        g_["busy"] = sorted(set(busy))
+        g_["old_enough"] = g_["age_h"] >= min_age_h
+        g_["eligible"] = g_["old_enough"] and not g_["busy"]
+        del g_["pids"]
+    groups.sort(key=lambda x: -x["age_h"])
+    return groups
+
+
 # ---------- output ----------
 
 def g(b):
@@ -275,20 +387,37 @@ def print_memory(m):
     print(f"  status: {'OVER soft limit by ' + g(m['noncache'] - m['soft']) if over else 'under soft limit'}")
 
 
+def print_strays(strays, min_age):
+    print(f"\nStray process trees (outside tmux and ssh logins): {len(strays)} using {g(sum(x['pss'] for x in strays))}")
+    for x in strays:
+        tag = "ELIGIBLE" if x["eligible"] else ("too young" if not x["old_enough"] else "ACTIVE")
+        ports = f", LISTENS on {' '.join(x['ports'])}" if x["ports"] else ""
+        print(f"[{tag}] pid {x['pid']}  age {x['age_h']:.1f} h, {x['n']} process(es), {g(x['pss'])}, "
+              f"parent {x['parent']}{ports}")
+        print(f"   cmd: {x['args'][:200]}")
+        if x["cwd"]:
+            print(f"   cwd: {x['cwd']}")
+        for r in x["busy"]:
+            print(f"   active: {r}")
+
+
 def cmd_report(a):
     m = slice_memory()
     ss = assess(sessions(), a.min_age_hours)
     ss.sort(key=lambda s: s["created"])
     stray, stray_mem = outside_tmux_claudes(ss)
+    strays = assess_strays(a.stray_min_age_hours)
     if a.json:
         json.dump({"memory": m, "min_age_hours": a.min_age_hours, "sessions": ss,
-                   "claude_outside_tmux": {"pids": stray, "pss": stray_mem}}, sys.stdout, indent=1)
+                   "claude_outside_tmux": {"pids": stray, "pss": stray_mem},
+                   "strays": strays}, sys.stdout, indent=1)
         print()
         return 0
     print_memory(m)
     print(f"Claude processes outside tmux: {len(stray)} using {g(stray_mem)}")
+    print_strays(strays, a.stray_min_age_hours)
     if not ss:
-        print("No tmux sessions.")
+        print("\nNo tmux sessions.")
         return 0
     print(f"\n{len(ss)} tmux session(s), oldest first. Eligible = older than {a.min_age_hours:g} h and nothing active.")
     for s in ss:
@@ -343,13 +472,49 @@ def cmd_kill(a):
     return rc
 
 
+def cmd_kill_strays(a):
+    by_pid = {x["pid"]: x for x in assess_strays(a.stray_min_age_hours)}
+    before = slice_memory()
+    procs = proc_table()
+    kids = children_map(procs)
+    rc = 0
+    for pid in a.pids:
+        x = by_pid.get(pid)
+        if x is None:
+            print(f"SKIP {pid}: not a stray process tree (gone, or now inside tmux or an ssh login)")
+            rc = 1
+            continue
+        if not x["eligible"]:
+            why = "; ".join(x["busy"]) or f"only {x['age_h']:.1f} h old"
+            print(f"SKIP {pid}: no longer eligible ({why})")
+            rc = 1
+            continue
+        pids = tree(pid, kids)
+        sig = signal.SIGKILL if a.force else signal.SIGTERM
+        for p in reversed(pids):
+            try:
+                os.kill(p, sig)
+            except (ProcessLookupError, PermissionError):
+                pass
+        deadline = time.time() + 5
+        while time.time() < deadline and any(os.path.exists(f"/proc/{p}") for p in pids):
+            time.sleep(0.5)
+        left = [p for p in pids if os.path.exists(f"/proc/{p}") and open(f"/proc/{p}/stat").read().split(")")[-1].split()[0] != "Z"]
+        print(f"KILLED {pid} ({x['args'][:80]}, {g(x['pss'])})" +
+              (f"; {len(left)} process(es) survived {sig.name}, rerun with --force for SIGKILL" if left else ""))
+    after = slice_memory()
+    if before and after:
+        print(f"Non-cache memory: {g(before['noncache'])} -> {g(after['noncache'])}")
+    return rc
+
+
 def cmd_check(a):
     m = slice_memory()
     # Only on machines that cap the user slice (the login node), so a laptop stays silent.
     if m and m["high"] and m["noncache"] > m["soft"]:
         print(f"WARNING: login-node memory for this user is {g(m['noncache'])} (soft limit {SOFT_LIMIT_GIB:g} GiB, "
               f"throttling at {g(m['high']) if m['high'] else '?'}). Tell the user and suggest the tmux-hygiene skill "
-              f"to kill old idle tmux sessions.")
+              f"to kill old idle tmux sessions and stray daemons.")
     return 0
 
 
@@ -360,11 +525,16 @@ def main():
     r.add_argument("--json", action="store_true")
     k = sub.add_parser("kill")
     k.add_argument("names", nargs="+")
+    ks = sub.add_parser("kill-strays")
+    ks.add_argument("pids", nargs="+", type=int)
+    ks.add_argument("--force", action="store_true", help="SIGKILL instead of SIGTERM")
     sub.add_parser("check")
     for p in (r, k):
         p.add_argument("--min-age-hours", type=float, default=48.0)
+    for p in (r, k, ks):
+        p.add_argument("--stray-min-age-hours", type=float, default=1.0)
     a = ap.parse_args()
-    return {"report": cmd_report, "kill": cmd_kill, "check": cmd_check}[a.cmd](a)
+    return {"report": cmd_report, "kill": cmd_kill, "kill-strays": cmd_kill_strays, "check": cmd_check}[a.cmd](a)
 
 
 if __name__ == "__main__":
